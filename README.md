@@ -11,8 +11,15 @@ Całość to jeden plik `index.html` (HTML + CSS + JavaScript), bez serwera i be
 1. Kliknij „Zaloguj się” i utwórz konto administratora.
 2. W zakładce **Pracownicy** załóż konta pracownikom („Utwórz konto”).
 
+## Funkcje
+- Kalendarz z przeciąganiem wizyt, serie wizyt, blokada podwójnej rezerwacji, dwie placówki (Otwock, Wiązowna).
+- Płatności (gotówka, karta, BLIK, telefon, przelew, pakiet, abonament) i pakiety wizyt ważne 3 miesiące.
+- Przypomnienia przez WhatsApp, SMS i Gmail, dodawanie wizyt do Kalendarza Google i plik .ics.
+- Strona główna: oferta, cennik, personel, integracja sensoryczna, partnerzy, regulamin, nawigacja Google Maps / Waze.
+
 ## Ważne
 - Dane (pacjenci, wizyty, konta) są zapisywane tylko w przeglądarce (localStorage) na danym urządzeniu – nie są wspólne dla różnych komputerów.
 - Przenoszenie danych: Ustawienia → Kopia zapasowa (pobierz / wczytaj JSON).
 - Hasła są przechowywane jako skrót SHA-256 z solą, ale logowanie działa po stronie przeglądarki – to nie jest zabezpieczenie na poziomie serwera.
 - Personel, cennik i dane kontaktowe pochodzą ze strony www.specer.pl.
+- Ikony marek: [theSVG](https://thesvg.org) (licencja MIT). Nazwy i logotypy należą do ich właścicieli.
