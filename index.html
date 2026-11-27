@@ -712,6 +712,55 @@ td .sub{color:var(--muted);font-size:12px}
 .rep-grid small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .rep-grid b{display:block;font-size:19px;margin-top:2px}
 @media (max-width:700px){.sc-row{grid-template-columns:1fr 1fr 14px 1fr}.sc-row select:last-child:nth-child(5){grid-column:1/-1}.rep-grid{grid-template-columns:1fr 1fr}}
+/* ---------- REZERWACJA ONLINE ---------- */
+.bk{max-width:1000px;margin:0 auto;background:#fff;border:1px solid #e1e9eb;border-radius:26px;box-shadow:0 24px 60px rgba(10,26,31,.08);overflow:hidden;color:#0f1f24}
+.bk-steps{display:flex;border-bottom:1px solid #e1e9eb;overflow-x:auto;background:#f6f9fa}
+.bk-steps div{flex:1;min-width:110px;padding:14px 10px;text-align:center;font-size:12.5px;font-weight:600;color:#8aa1a7;position:relative;white-space:nowrap}
+.bk-steps div b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#e1e9eb;color:#61737a;margin-right:6px;font-size:12px}
+.bk-steps div.on{color:#0f1f24}.bk-steps div.on b{background:var(--grad);color:#fff}
+.bk-steps div.done{color:#04857d}.bk-steps div.done b{background:rgba(5,171,161,.15);color:#04857d}
+.bk-steps div.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:3px;border-radius:3px;background:var(--grad)}
+.bk-body{padding:28px;min-height:320px;animation:viewIn .35s}
+.bk-body h3{font-family:Montserrat,Inter,sans-serif;font-size:22px;margin-bottom:6px}
+.bk-body>p.sub{color:#61737a;margin-bottom:18px}
+.bk-choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.bk-c{border:1.5px solid #e1e9eb;border-radius:16px;padding:16px;cursor:pointer;transition:.2s;background:#fff;text-align:left;display:flex;gap:12px;align-items:flex-start;color:#0f1f24}
+.bk-c:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 24px rgba(10,26,31,.08)}
+.bk-c.on{border-color:var(--accent);background:linear-gradient(135deg,rgba(5,171,161,.08),rgba(176,202,9,.06))}
+.bk-c b{display:block;font-size:15px}
+.bk-c span{display:block;color:#61737a;font-size:12.5px;margin-top:3px;line-height:1.45}
+.bk-c .pr{color:#04857d;font-weight:700;margin-top:6px}
+.bk-c .avatar{width:42px;height:42px;font-size:14px}
+.bk-cat{font-size:11.5px;text-transform:uppercase;letter-spacing:1px;color:#8aa1a7;font-weight:700;margin:18px 0 8px}
+.bk-cat:first-child{margin-top:0}
+.bk-days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px}
+.bk-days button{min-width:76px;border:1.5px solid #e1e9eb;background:#fff;border-radius:14px;padding:10px 6px;cursor:pointer;text-align:center;transition:.2s;color:#0f1f24}
+.bk-days button small{display:block;font-size:11px;color:#61737a;text-transform:capitalize}
+.bk-days button b{display:block;font-size:19px}
+.bk-days button i{display:block;font-style:normal;font-size:10.5px;color:#04857d;font-weight:700;margin-top:2px}
+.bk-days button.none{opacity:.45}
+.bk-days button.on{background:var(--grad);border-color:transparent;color:#fff}.bk-days button.on small,.bk-days button.on i{color:#fff}
+.bk-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.bk-slots button{border:1.5px solid #e1e9eb;background:#fff;border-radius:12px;padding:11px 4px;font-weight:700;cursor:pointer;transition:.15s;color:#0f1f24}
+.bk-slots button:hover{border-color:var(--accent);color:var(--accent)}
+.bk-slots button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bk-slots button small{display:block;font-weight:500;font-size:10.5px;color:#61737a;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk-slots button.on small{color:#e6fffb}
+.bk-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 28px;border-top:1px solid #e1e9eb;background:#f6f9fa;flex-wrap:wrap}
+.bk-sum{font-size:13px;color:#61737a;order:-1;flex-basis:100%;text-align:center}
+.bk-sum b{color:#0f1f24}
+.bk .input{background:#fff;border-color:#e1e9eb;color:#0f1f24}
+.bk .field label{color:#4b5f66}
+.bk-ok{text-align:center;padding:10px 0}
+.bk-ok .big{width:76px;height:76px;border-radius:50%;background:var(--grad);display:grid;place-items:center;margin:0 auto 16px;color:#fff;animation:pop .6s cubic-bezier(.2,.9,.3,1.4)}
+.bk-ok .big svg{width:38px;height:38px}
+.bk-code{display:inline-block;font-family:Montserrat,monospace;font-size:26px;letter-spacing:4px;font-weight:700;background:#f6f9fa;border:1.5px dashed var(--accent);border-radius:14px;padding:8px 18px;margin:10px 0}
+.bk-demo{display:flex;gap:10px;align-items:flex-start;background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:18px}
+.bk-tbl{width:100%;max-width:520px;margin:16px auto;text-align:left;border-collapse:collapse}
+.bk-tbl td{padding:8px 10px;border-bottom:1px solid #e1e9eb;font-size:14px}
+.bk-tbl td:first-child{color:#61737a;width:40%}
+.online-b{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#0891b2;background:rgba(8,145,178,.12);padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:6px}
+@media (max-width:600px){.bk-body{padding:20px 16px}.bk-foot{padding:14px 16px}.bk-choices{grid-template-columns:1fr}}
 /* ---------- TOAST ---------- */
 #toasts{position:fixed;top:16px;right:16px;z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:none}
 .toast{pointer-events:auto;display:flex;gap:12px;align-items:flex-start;min-width:290px;max-width:390px;background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:0 16px 40px rgba(0,0,0,.22);border-left:5px solid;animation:toastIn .45s cubic-bezier(.2,.9,.3,1.2);position:relative;overflow:hidden;cursor:pointer}
@@ -789,7 +838,7 @@ td .sub{color:var(--muted);font-size:12px}
  <header class="ln-nav" id="lnNav">
   <div class="ln-wrap ln-nav-in">
    <div class="brand" onclick="lnScroll('top')"><svg class="mark" viewBox="0 0 100 100" id="lnMark"></svg><div class="word"><b>SPECER</b><span>Centrum Rehabilitacji</span></div></div>
-   <nav class="ln-links" id="lnLinks"><a onclick="lnScroll('onas')">Oferta</a><a onclick="lnScroll('dzieci')">Dla dzieci</a><a onclick="lnScroll('uslugi')">Cennik</a><a onclick="lnScroll('zespol')">Personel</a><a onclick="lnScroll('partnerzy')">Partnerzy</a><a onclick="lnScroll('kontakt')">Kontakt</a></nav>
+   <nav class="ln-links" id="lnLinks"><a onclick="lnScroll('rezerwacja')" style="font-weight:700">Umów online</a><a onclick="lnScroll('onas')">Oferta</a><a onclick="lnScroll('dzieci')">Dla dzieci</a><a onclick="lnScroll('uslugi')">Cennik</a><a onclick="lnScroll('zespol')">Personel</a><a onclick="lnScroll('partnerzy')">Partnerzy</a><a onclick="lnScroll('kontakt')">Kontakt</a></nav>
    <button class="btn grad sm" onclick="lnLogin()"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="t">Zaloguj się</span></button>
    <button class="ln-burger" onclick="event.stopPropagation();$('#lnLinks').classList.toggle('open')" aria-label="Menu"><svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   </div>
@@ -1526,7 +1575,7 @@ function vCalendar(){
       const v=x.v,p=P(v.patientId),top=(toMin(v.time)-START)/30*SLOT_H,h=Math.max(dur(v)/30*SLOT_H-3,26);
       const w=100/x.cols,drag=staff&&OPEN(v);
       return `<div class="ev e-${v.status}" ${drag?`draggable="true" ondragstart="dragStart(event,${v.id})" ondragend="dragEnd(event)"`:''} style="top:${top+1}px;height:${h}px;left:calc(${x.col*w}% + 3px);width:calc(${w}% - 6px);animation-delay:${i*.04}s" onclick="event.stopPropagation();visitDetails(${v.id})" title="${esc(pName(p))} · ${v.time}–${endT(v)} · ${esc(uName(v.therapistId))} · ${ST[v.status].l}">
-        <b><i style="background:${uColor(v.therapistId)}"></i>${esc(pName(p))}</b><span>${v.time}–${endT(v)} · ${esc(uName(v.therapistId).split(' ')[0])}</span>${h>52?`<span>${esc(S(v.serviceId)?.name||'')}</span>`:''}</div>`;
+        <b><i style="background:${uColor(v.therapistId)}"></i>${esc(pName(p))}${v.source==='online'?' 🌐':''}</b><span>${v.time}–${endT(v)} · ${esc(uName(v.therapistId).split(' ')[0])}</span>${h>52?`<span>${esc(S(v.serviceId)?.name||'')}</span>`:''}</div>`;
     }).join('');
     const nl=d===t&&nm>=START&&nm<END?`<div class="now-line" style="top:${(nm-START)/30*SLOT_H}px"></div>`:'';
     return `<div class="cal-day ${d===t?'today':''}">${slots.map(m=>{const past=d<t||(d===t&&m+30<=nm);const av=thSel?availability(thSel,d,m,m+30):{ok:true};return`<div class="slot ${m%60===30?'hour':''} ${staff?'':'ro'} ${past?'past':''} ${av.ok?'':'off'}" title="${av.ok?'':esc(av.reason)}" data-t="${fromMin(m)}" ${staff?`onclick="visitForm(null,{date:'${d}',time:'${fromMin(m)}'})" ondragover="dragOver(event)" ondragleave="this.classList.remove('drop')" ondrop="dropVisit(event,'${d}','${fromMin(m)}')"`:''}></div>`}).join('')}${evs}${nl}</div>`;
@@ -1726,6 +1775,7 @@ function visitDetails(id){
   const canFinish=v.therapistId===me.id&&OPEN(v)&&v.date<=today();
   const o=openModal('Szczegóły wizyty',`
     <div style="display:flex;gap:14px;align-items:center;margin-bottom:18px;flex-wrap:wrap">${avatar(pName(p),p?COLORS[p.id%COLORS.length]:'#94a3b8','lg')}<div style="flex:1;min-width:0"><h3 style="font-size:18px">${esc(pName(p))}</h3><div style="color:var(--muted)">${p?`<a href="${telHref(p.phone)}" style="color:var(--accent);font-weight:600">${esc(p.phone)}</a>`:''}</div></div>${badge(v.status)}</div>
+    ${v.source==='online'?`<div class="warnbox" style="margin:0 0 14px;background:rgba(8,145,178,.08);border-color:rgba(8,145,178,.3);color:#0891b2">${ico('globe','width:15px;height:15px;vertical-align:-3px')} Rezerwacja online · kod <b>${esc(v.code||'')}</b> · ${new Date(v.created).toLocaleString('pl-PL',{dateStyle:'short',timeStyle:'short'})}${v.status==='zaplanowana'?' – potwierdź telefonicznie i zmień status':''}</div>`:''}
     <dl class="kv"><dt>Data</dt><dd>${cap(dLong(v.date))}</dd><dt>Godzina</dt><dd>${v.time} – ${endT(v)}</dd>
     <dt>Usługa</dt><dd>${esc(s?.name||'—')} (${dur(v)} min)</dd><dt>Cena</dt><dd>${money(price(v))}</dd><dt>Specjalista</dt><dd><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${uColor(v.therapistId)};margin-right:6px"></span>${esc(fullName(U(v.therapistId)))}</dd>${v.loc?`<dt>Placówka</dt><dd>${esc(v.loc)}</dd>`:''}
     ${v.note?`<dt>Notatka</dt><dd style="font-weight:400">${esc(v.note)}</dd>`:''}${v.tNote?`<dt>Notatka terapeuty</dt><dd style="font-weight:400">${esc(v.tNote)}</dd>`:''}</dl>
@@ -1876,7 +1926,7 @@ function renderVisitTable(){
     const canFinish=v.therapistId===me.id&&OPEN(v)&&v.date<=t;
     return `<tr style="animation-delay:${Math.min(i,15)*.03}s">
     <td><b>${cap(parse(v.date).toLocaleDateString('pl-PL',{weekday:'short',day:'numeric',month:'short'}))}</b><div class="sub">${v.time} – ${endT(v)}</div></td>
-    <td class="clickable" onclick="patientCard(${v.patientId})"><b>${esc(pName(p))}</b><div class="sub">${esc(p?.phone||'')}</div></td>
+    <td class="clickable" onclick="patientCard(${v.patientId})"><b>${esc(pName(p))}${v.source==='online'?'<span class="online-b">online</span>':''}</b><div class="sub">${esc(p?.phone||'')}</div></td>
     <td>${esc(S(v.serviceId)?.name||'—')}<div class="sub">${money(price(v))}</div></td>
     ${staff?`<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${uColor(v.therapistId)};margin-right:6px"></span>${esc(uName(v.therapistId))}</td>`:''}
     <td>${badge(v.status)}${v.paid?`<div class="paid">${ico('check','width:12px;height:12px')} opłacona · ${esc(PAY[v.paid.method]?.l||'')}</div>`:''}${locNames().length>1&&v.loc?`<div class="sub">${ico('pin','width:11px;height:11px;vertical-align:-1px')} ${esc(v.loc)}</div>`:''}</td>
@@ -2339,6 +2389,12 @@ function vSettings(){
     </div>
     <div>
     ${me.role==='admin'?`<div class="card" style="margin-bottom:20px">
+      <div class="card-head"><div><h4>Rezerwacje online</h4><small>Formularz „Umów wizytę online” na stronie głównej</small></div></div>
+      <div class="set-row"><div><b>Rezerwacje online włączone</b><p>Pacjenci mogą sami wybrać wolny termin.</p></div><button class="switch ${bkCfg().on?'on':''}" onclick="db.clinic.online={...bkCfg(),on:!bkCfg().on};save();render()" aria-label="Rezerwacje online"></button></div>
+      <div class="row3"><div class="field"><label>Min. wyprzedzenie (godz.)</label><input class="input" type="number" min="0" value="${bkCfg().lead}" onchange="db.clinic.online={...bkCfg(),lead:Math.max(0,+this.value||0)};save()"></div>
+      <div class="field"><label>Horyzont (dni)</label><input class="input" type="number" min="1" max="90" value="${bkCfg().days}" onchange="db.clinic.online={...bkCfg(),days:Math.min(90,Math.max(1,+this.value||21))};save()"></div>
+      <div class="field"><label>Usługi lekarskie online</label><select class="input" onchange="db.clinic.online={...bkCfg(),doctors:this.value==='1'};save()"><option value="0" ${bkCfg().doctors?'':'selected'}>Nie</option><option value="1" ${bkCfg().doctors?'selected':''}>Tak</option></select></div></div>
+      <div style="height:18px"></div>
       <div class="card-head"><div><h4>Dane placówek</h4><small>Wyświetlane na stronie głównej</small></div></div>
       <div class="field"><label>Opis na stronie głównej</label><textarea class="input" id="clD" rows="2">${esc(db.clinic.about)}</textarea></div>
       <div class="field"><label>Godziny otwarcia</label><input class="input" id="clH" value="${esc(db.clinic.hours)}"></div>
@@ -2551,6 +2607,145 @@ function renderStaffTabs(){
   $('#stBox').innerHTML=(d?`<div class="ddesc">${d.p.map(x=>`<p>${esc(x)}</p>`).join('')}${d.b.length?`<ul class="ticks" style="margin-top:12px">${d.b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>`:'')+
     `<div class="pgrid">${ppl.map((u,i)=>`<div class="pc" style="animation-delay:${Math.min(i,12)*.03}s">${avatar(u.name,u.color)}<div style="min-width:0">${u.title?`<small>${esc(u.title)}</small>`:''}<b>${esc(u.name)}</b>${(u.specs||[u.spec]).filter(Boolean).map(x=>`<span class="tg">${esc(x)}</span>`).join('')}</div></div>`).join('')}</div>`;
 }
+/* =========================================================
+   REZERWACJA ONLINE (dla pacjentów)
+   ========================================================= */
+const bkCfg=()=>({on:true,lead:2,days:21,doctors:false,...(db.clinic?.online||{})});
+const bk={step:0};
+// kto może wykonać usługę – na podstawie działów i specjalizacji z personelu SPECER
+function svcProviders(svc){
+  const n=(svc?.name||'').toLowerCase(),th=therapists();
+  const has=(u,re)=>re.test(((u.groups||[u.group]).join(' ')+' '+(u.spec||'')).toLowerCase());
+  let r=null;
+  if(/integracja sensoryczna/.test(n))r=/integracji sensorycznej|terapeuta si/;
+  else if(/terapia ręki/.test(n))r=/terapeuta ręki/;
+  else if(/logoped/.test(n))r=/logoped/;
+  else if(/ndt|bobath|niemowl/.test(n))r=/ndt|bobath/;
+  else if(/fits/.test(n))r=/fits/;
+  else if(/uroginek/.test(n))r=/uroginek/;
+  else if(/skroniowo/.test(n))r=/skroniowo/;
+  else if(/usg bioderek/.test(n))r=/bioderek/;
+  else if(/usg/.test(n))r=/usg/;
+  else if(/psycholog/.test(n))r=/psycholog/;
+  else if(/ekg/.test(n))r=/kardiolog/;
+  else if(/konsultacja lekarska|blokada/.test(n))r=/ortoped|chirurg|neurolog|reumatolog|internista|kardiolog/;
+  else if(/rehabilitacja domowa/.test(n))r=/wizyty domowe/;
+  else r=/fizjoterapeuci|fizjoterapia dorosłych/;
+  const l=th.filter(u=>has(u,r));
+  return l.length?l:th.filter(u=>has(u,/fizjoterapeuci/));
+}
+function locWindow(locName,date){
+  const l=(db.clinic?.locations||[]).find(x=>x.name===locName),dw=parse(date).getDay();
+  if(dw===0)return null;
+  if(dw===6){const m=(l?.hours||'').match(/Sob[^0-9]*(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/i);return m?[+m[1]*60+ +m[2],+m[3]*60+ +m[4]]:null}
+  return [START,END];
+}
+function bkSlots(date){
+  const svc=S(bk.svc);if(!svc)return[];
+  const win=locWindow(bk.loc,date);if(!win)return[];
+  const pros=bk.ther?[U(bk.ther)].filter(Boolean):svcProviders(svc);
+  const now=new Date(),minT=now.getTime()+bkCfg().lead*3600e3,out=[];
+  for(let m=win[0];m+svc.dur<=win[1];m+=30){
+    const st=parse(date);st.setMinutes(m);if(st.getTime()<minT)continue;
+    const free=pros.filter(u=>{const a=availability(u,date,m,m+svc.dur);if(!a.ok)return false;if(a.loc&&a.loc!==bk.loc)return false;
+      return !db.visits.some(v=>v.therapistId===u.id&&v.date===date&&ACTIVE(v)&&toMin(v.time)<m+svc.dur&&m<toMin(v.time)+dur(v))});
+    if(free.length)out.push({time:fromMin(m),pros:free});
+  }
+  return out;
+}
+const bkDays=()=>{const out=[];let d=new Date();for(let i=0;i<=bkCfg().days;i++){const ds=fmt(addDays(d,i));if(parse(ds).getDay()!==0)out.push(ds)}return out};
+function bkGo(step){bk.step=step;renderBooking();const el=document.getElementById('bk');if(el&&step>0)el.scrollIntoView({behavior:'smooth',block:'start'})}
+function renderBooking(){
+  const el=document.getElementById('bk');if(!el)return;
+  const cfg=bkCfg(),L=locNames(),main=(db.clinic?.locations||[])[0]||{};
+  if(!cfg.on){el.innerHTML=`<div class="bk-body" style="text-align:center"><h3>Rezerwacje online są chwilowo niedostępne</h3><p class="sub">Zadzwoń do rejestracji${main.phone?`: <a href="${telHref(main.phone)}" style="color:var(--accent);font-weight:700">${esc(main.phone)}</a>`:''}.</p></div>`;return}
+  if(!L.length||!db.services.length){el.innerHTML='<div class="bk-body">Brak danych do rezerwacji.</div>';return}
+  if(L.length===1&&bk.step===0){bk.loc=L[0];bk.step=1}
+  const steps=['Placówka','Usługa','Specjalista','Termin','Dane','Gotowe'];
+  const svc=S(bk.svc),th=bk.ther?U(bk.ther):null;
+  let body='',foot='';
+  const sum=`<div class="bk-sum">${[bk.loc&&`📍 <b>${esc(bk.loc)}</b>`,svc&&`<b>${esc(svc.name)}</b> · ${esc(svcPrice(svc))}`,bk.step>2&&(th?`<b>${esc(fullName(th))}</b>`:'dowolny specjalista'),bk.date&&bk.time&&`<b>${cap(dLong(bk.date))}, ${bk.time}</b>`].filter(Boolean).join(' · ')||'Wybierz opcje krok po kroku'}</div>`;
+  const back=bk.step>(L.length===1?1:0)&&bk.step<5?`<button class="btn ghost" style="background:#fff;color:#0f1f24;border-color:#e1e9eb" onclick="bkGo(${bk.step-1})">${ico('chevL')} Wstecz</button>`:'<span></span>';
+  if(bk.step===0){
+    body=`<h3>Wybierz placówkę</h3><p class="sub">SPECER przyjmuje w dwóch lokalizacjach.</p><div class="bk-choices">${(db.clinic.locations||[]).map(l=>`<button class="bk-c ${bk.loc===l.name?'on':''}" onclick="bk.loc='${esc(l.name)}';bk.date=null;bk.time=null;bkGo(1)"><div class="ln-ic" style="margin:0;width:44px;height:44px">${ico('building')}</div><div><b>${esc(l.name)}</b><span>${esc(l.address)}${l.extra?'<br>'+esc(l.extra):''}</span><span>${ico('clock','width:12px;height:12px;vertical-align:-2px')} ${esc(l.hours||'')}</span></div></button>`).join('')}</div>`;
+  }else if(bk.step===1){
+    const g={};db.services.filter(x=>cfg.doctors||x.cat!=='Lekarze i USG').forEach(x=>(g[x.cat||'Inne']=g[x.cat||'Inne']||[]).push(x));
+    body=`<h3>Wybierz usługę</h3><p class="sub">Nie wiesz, co wybrać? Zacznij od konsultacji z fizjoterapeutą.</p>${Object.entries(g).map(([c,l])=>`<div class="bk-cat">${esc(c)}</div><div class="bk-choices">${l.map(x=>`<button class="bk-c ${bk.svc===x.id?'on':''}" onclick="bk.svc=${x.id};bk.ther=null;bk.date=null;bk.time=null;bkGo(2)"><div><b>${esc(x.name)}</b><span>${ico('clock','width:12px;height:12px;vertical-align:-2px')} ${x.dur} min</span><div class="pr">${esc(svcPrice(x))}</div></div></button>`).join('')}</div>`).join('')}`;
+  }else if(bk.step===2){
+    const pros=svcProviders(svc);
+    body=`<h3>Wybierz specjalistę</h3><p class="sub">${esc(svc.name)} – ${pros.length} ${pros.length===1?'specjalista':'specjalistów'}.</p><div class="bk-choices">
+      <button class="bk-c ${!bk.ther?'on':''}" onclick="bk.ther=null;bk.date=null;bk.time=null;bkGo(3)"><div class="ln-ic" style="margin:0;width:42px;height:42px">${ico('users')}</div><div><b>Dowolny specjalista</b><span>Pokażemy najwięcej wolnych terminów</span></div></button>
+      ${pros.map(u=>`<button class="bk-c ${bk.ther===u.id?'on':''}" onclick="bk.ther=${u.id};bk.date=null;bk.time=null;bkGo(3)">${avatar(u.name,u.color)}<div>${u.title?`<span style="margin:0">${esc(u.title)}</span>`:''}<b>${esc(u.name)}</b><span>${esc(u.spec||u.group||'')}</span></div></button>`).join('')}</div>`;
+  }else if(bk.step===3){
+    const days=bkDays(),cnt={};days.forEach(d=>cnt[d]=bkSlots(d).length);
+    if(!bk.date||!cnt[bk.date])bk.date=days.find(d=>cnt[d])||days[0];
+    const sl=bkSlots(bk.date);
+    body=`<h3>Wybierz termin</h3><p class="sub">${esc(svc.name)} · ${svc.dur} min${th?' · '+esc(fullName(th)):''}</p>
+      <div class="bk-days">${days.map(d=>{const dd=parse(d);return`<button class="${d===bk.date?'on':''} ${cnt[d]?'':'none'}" ${cnt[d]?'':'disabled'} onclick="bk.date='${d}';bk.time=null;renderBooking()"><small>${dd.toLocaleDateString('pl-PL',{weekday:'short'})}</small><b>${dd.getDate()}</b><small>${dd.toLocaleDateString('pl-PL',{month:'short'})}</small><i>${cnt[d]?cnt[d]+' wolne':'brak'}</i></button>`}).join('')}</div>
+      ${sl.length?`<div class="bk-slots">${sl.map(x=>`<button class="${bk.time===x.time?'on':''}" onclick="bk.time='${x.time}';bk.pick=${th?th.id:x.pros[0].id};renderBooking()">${x.time}${th?'':`<small>${esc(x.pros[0].name.split(' ')[0])}${x.pros.length>1?' +'+(x.pros.length-1):''}</small>`}</button>`).join('')}</div>`:`<div class="empty">${ico('calX')}<div>Brak wolnych terminów w wybranym okresie.${main.phone?` Zadzwoń: <a href="${telHref(main.phone)}" style="color:var(--accent);font-weight:700">${esc(main.phone)}</a>`:''}</div></div>`}`;
+    foot=`<button class="btn grad" ${bk.time?'':'disabled'} onclick="bkGo(4)">Dalej ${ico('arrow')}</button>`;
+  }else if(bk.step===4){
+    const f=bk.form||{};
+    body=`<h3>Twoje dane</h3><p class="sub">${cap(dLong(bk.date))}, godz. ${bk.time} · ${esc(svc.name)} · ${esc(fullName(U(bk.pick)))} · ${esc(bk.loc)}</p>
+      <div class="bk-demo">${ico('info','width:18px;height:18px;flex:none')}<div><b>Wersja demonstracyjna.</b> Ta strona nie ma serwera – rezerwacja zapisze się tylko w tej przeglądarce i <b>nie trafi do rejestracji SPECER</b>. Aby umówić prawdziwą wizytę, zadzwoń${main.phone?`: <a href="${telHref(main.phone)}"><b>${esc(main.phone)}</b></a>`:''}.</div></div>
+      <div class="row2"><div class="field"><label>Imię *</label><input class="input" id="bkF" value="${esc(f.first||'')}" autocomplete="given-name"></div><div class="field"><label>Nazwisko *</label><input class="input" id="bkL" value="${esc(f.last||'')}" autocomplete="family-name"></div></div>
+      <div class="row2"><div class="field"><label>Telefon *</label><input class="input" id="bkT" value="${esc(f.phone||'')}" inputmode="tel" autocomplete="tel" placeholder="500 000 000"></div><div class="field"><label>E-mail</label><input class="input" id="bkE" type="email" value="${esc(f.email||'')}" autocomplete="email"></div></div>
+      <div class="field"><label>Opis dolegliwości / uwagi (opcjonalnie)</label><textarea class="input" id="bkN" rows="2" placeholder="np. ból kolana po urazie, wizyta dla dziecka 5 lat">${esc(f.note||'')}</textarea></div>
+      <label class="chk"><input type="checkbox" id="bkC1" ${f.c1?'checked':''}> Akceptuję <a href="https://www.specer.pl/regulamin-rehabilitacji/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">regulamin rehabilitacji</a> (m.in. odwołanie wizyty do 19:00 dnia poprzedniego lub 3 h przed) *</label>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" id="bkC2" ${f.c2?'checked':''}> Wyrażam zgodę na przetwarzanie danych osobowych w celu realizacji wizyty *</label>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" id="bkC3" ${f.c3!==false?'checked':''}> Chcę otrzymać przypomnienie o wizycie (SMS / e-mail)</label>
+      <div id="bkErr" class="login-err hidden" style="margin-top:14px"></div>`;
+    foot=`<button class="btn grad" onclick="bkSubmit()">${ico('check')} Potwierdzam rezerwację</button>`;
+  }else if(bk.step===5){
+    const v=db.visits.find(x=>x.id===bk.done);
+    body=v?`<div class="bk-ok"><div class="big">${ico('check')}</div><h3>Rezerwacja przyjęta!</h3><p class="sub" style="margin-bottom:0">Twój kod rezerwacji:</p><div class="bk-code">${esc(v.code)}</div>
+      <table class="bk-tbl"><tr><td>Termin</td><td><b>${cap(dLong(v.date))}, ${v.time}–${endT(v)}</b></td></tr><tr><td>Usługa</td><td>${esc(S(v.serviceId)?.name||'')} · ${esc(svcPrice(S(v.serviceId)))}</td></tr><tr><td>Specjalista</td><td>${esc(fullName(U(v.therapistId)))}</td></tr><tr><td>Placówka</td><td>${esc(v.loc)} – ${esc(locOf(v)?.address||'')}</td></tr></table>
+      <div class="share-row" style="justify-content:center"><a class="share" href="${gcalLink(v)}" target="_blank" rel="noopener">${brand('google-calendar',17,17)} Kalendarz Google</a><button class="share" type="button" onclick="downloadICS(${v.id})">${brand('apple',16,14)}${brand('microsoft-outlook',16,17)} Plik .ics</button>${locOf(v)?.address?`<a class="share" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('SPECER '+locOf(v).address)}" target="_blank" rel="noopener">${brand('google-maps',17,12)} Dojazd</a>`:''}</div>
+      <p class="sub" style="margin-top:12px">Zachowaj kod – pozwala sprawdzić lub odwołać rezerwację. Odwołanie możliwe do 19:00 dnia poprzedniego (wizyty do 12:00) lub 3 h przed wizytą.</p></div>`:'';
+    foot=`<span></span><button class="btn grad" onclick="Object.assign(bk,{step:0,svc:null,ther:null,date:null,time:null,form:null,done:null});renderBooking()">${ico('plus')} Nowa rezerwacja</button>`;
+  }
+  el.innerHTML=`<div class="bk-steps">${steps.map((x,i)=>`<div class="${i===bk.step?'on':i<bk.step?'done':''}"><b>${i<bk.step?'✓':i+1}</b>${x}</div>`).join('')}</div><div class="bk-body">${body}</div>${bk.step<5?`<div class="bk-foot">${back}${sum}${foot||'<span></span>'}</div>`:`<div class="bk-foot">${foot}</div>`}`;
+}
+function bkSubmit(){
+  const g=id=>(document.getElementById(id)?.value||'').trim(),ck=id=>document.getElementById(id)?.checked;
+  const f={first:g('bkF'),last:g('bkL'),phone:g('bkT'),email:g('bkE'),note:g('bkN'),c1:ck('bkC1'),c2:ck('bkC2'),c3:ck('bkC3')};bk.form=f;
+  const err=m=>{const e=document.getElementById('bkErr');e.textContent=m;e.classList.remove('hidden')};
+  if(!f.first||!f.last)return err('Podaj imię i nazwisko.');
+  if(f.phone.replace(/\D/g,'').length<9)return err('Podaj poprawny numer telefonu (9 cyfr).');
+  if(f.email&&!/^\S+@\S+\.\S+$/.test(f.email))return err('Podaj poprawny adres e-mail.');
+  if(!f.c1||!f.c2)return err('Zaakceptuj regulamin i zgodę na przetwarzanie danych.');
+  // termin mógł się w międzyczasie zająć
+  const slot=bkSlots(bk.date).find(x=>x.time===bk.time);
+  const u=slot&&(slot.pros.find(x=>x.id===bk.pick)||slot.pros[0]);
+  if(!u){bk.time=null;bk.step=3;renderBooking();toast('Termin został zajęty','Wybierz inny wolny termin','warn');return}
+  const ph=f.phone.replace(/\D/g,'').slice(-9);
+  let pt=db.patients.find(x=>x.phone.replace(/\D/g,'').slice(-9)===ph);
+  if(!pt){pt={id:nid(),first:f.first,last:f.last,phone:f.phone,email:f.email,notes:'',created:today(),packages:[],source:'online',consents:{rodo:true,treat:true,remind:!!f.c3,date:today()}};db.patients.push(pt)}
+  else{if(!pt.email&&f.email)pt.email=f.email;pt.consents={...(pt.consents||{}),rodo:true,remind:!!f.c3,date:today()}}
+  const code=Array.from({length:6},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+  const v={id:nid(),loc:bk.loc,patientId:pt.id,serviceId:bk.svc,therapistId:u.id,date:bk.date,time:bk.time,note:f.note?'Online: '+f.note:'Rezerwacja online',status:'zaplanowana',tNote:'',created:Date.now(),source:'online',code};
+  db.visits.push(v);save();
+  notify(`🌐 Rezerwacja online: ${pName(pt)}, ${dShort(v.date)} ${v.time} (${S(v.serviceId)?.name}) – do potwierdzenia`,'warn',['admin','recepcja']);
+  notify(`🌐 Nowa wizyta online: ${pName(pt)}, ${dShort(v.date)} ${v.time}`,'info',[],u.id);
+  bk.done=v.id;bkGo(5);
+}
+function bkManage(){
+  const o=openModal('Moja rezerwacja',`<p style="color:var(--muted);margin-bottom:14px">Podaj kod rezerwacji i numer telefonu użyty przy rezerwacji.</p>
+    <div class="row2"><div class="field"><label>Kod rezerwacji</label><input class="input" id="mgC" style="text-transform:uppercase;letter-spacing:2px" maxlength="6"></div><div class="field"><label>Telefon</label><input class="input" id="mgT" inputmode="tel"></div></div><div id="mgOut"></div>`,
+    `<button class="btn ghost" data-c>Zamknij</button><button class="btn grad" data-s>${ico('search')} Sprawdź</button>`,'small');
+  const q=s=>o.querySelector(s);q('[data-c]').onclick=closeModal;
+  q('[data-s]').onclick=()=>{
+    const c=q('#mgC').value.trim().toUpperCase(),ph=q('#mgT').value.replace(/\D/g,'').slice(-9);
+    const v=db.visits.find(x=>x.code===c&&P(x.patientId)?.phone.replace(/\D/g,'').slice(-9)===ph);
+    if(!v){q('#mgOut').innerHTML='<div class="login-err">Nie znaleziono rezerwacji o tym kodzie i numerze telefonu.</div>';return}
+    const can=OPEN(v)&&!lateCancel(v),main=(db.clinic?.locations||[])[0]||{};
+    q('#mgOut').innerHTML=`<div class="pay-box ${v.status==='odwolana'?'':'ok'}" style="display:block"><b>${cap(dLong(v.date))}, ${v.time}</b><span>${esc(S(v.serviceId)?.name||'')} · ${esc(fullName(U(v.therapistId)))} · ${esc(v.loc||'')}</span><span>Status: <b>${ST[v.status].l}</b></span></div>
+      ${OPEN(v)?(can?`<button class="btn danger" id="mgX" style="width:100%">${ico('calX')} Odwołaj rezerwację</button>`:`<div class="warnbox">Termin odwołania online minął (regulamin: do 19:00 dnia poprzedniego lub 3 h przed wizytą). Skontaktuj się z rejestracją${main.phone?`: <a href="${telHref(main.phone)}"><b>${esc(main.phone)}</b></a>`:''}.</div>`):''}`;
+    const x=q('#mgX');if(x)x.onclick=async()=>{if(!await confirmBox('Odwołać rezerwację?',`${cap(dLong(v.date))}, ${v.time}`,'Odwołaj'))return;v.status='odwolana';save();
+      notify(`🌐 Pacjent odwołał online: ${pName(P(v.patientId))}, ${dShort(v.date)} ${v.time}`,'error',['admin','recepcja']);notify(`Odwołano Twoją wizytę (online): ${pName(P(v.patientId))}, ${dShort(v.date)} ${v.time}`,'error',[],v.therapistId);
+      closeAll();renderBooking();toast('Rezerwacja odwołana','Termin został zwolniony','info')};
+  };
+}
 let lnObs=null;
 function renderLanding(){
   const c=db.clinic||defaultClinic(),th=therapists(),L=c.locations||[],main=L[0]||{},wz=L.find(l=>/wiązown/i.test(l.name));
@@ -2559,7 +2754,7 @@ function renderLanding(){
     ${wz?`<span class="ann" onclick="lnScroll('kontakt')"><b>Nowy oddział</b>Nowa placówka w Wiązownie już otwarta ${ico('arrow','width:15px;height:15px')}</span>`:`<span class="ln-pill"><i></i>Specjalistyczne Centrum Rehabilitacji</span>`}
     <h1>Rehabilitacja i konsultacje ze specjalistami — <span class="grad-text">kompleksowa opieka</span></h1>
     <p class="lead">${esc(c.about)}</p>
-    <div class="ln-cta"><button class="btn grad lg" onclick="lnScroll('onas')">Poznaj zakres usług ${ico('arrow','width:18px;height:18px')}</button>${main.phone?`<a class="btn ln-ghost lg" href="${telHref(main.phone)}">${ico('phone','width:18px;height:18px')} ${esc(main.phone)}</a>`:''}</div>
+    <div class="ln-cta"><button class="btn grad lg" onclick="lnScroll('rezerwacja')">${ico('calCheck','width:18px;height:18px')} Umów wizytę online</button><button class="btn ln-ghost lg" onclick="lnScroll('onas')">Zakres usług</button>${main.phone?`<a class="btn ln-ghost lg" href="${telHref(main.phone)}">${ico('phone','width:18px;height:18px')} ${esc(main.phone)}</a>`:''}</div>
     <div class="ln-stats"><div><b>15 lat</b><span>doświadczenia</span></div><div><b>${L.length||1}</b><span>${L.length===1?'placówka':'placówki'}</span></div><div><b>${th.length}</b><span>specjalistów</span></div><div><b>6 dni</b><span>w tygodniu</span></div></div>`;
   const steps=[['Rejestracja','Zadzwoń lub napisz. W rejestracji pomożemy dobrać specjalistę i termin.'],['Konsultacja','Lekarz lub fizjoterapeuta bada, omawia wyniki badań, proponuje plan terapii.'],['Terapia','Regularne sesje indywidualne lub w pakietach 5 / 10 wizyt. Monitorujemy efekty.'],['Powrót do formy','Gimnastyka porehabilitacyjna, zalecenia na co dzień, w razie potrzeby – sesje kontrolne.']];
   const locs=L.map(l=>`<div class="loc"><h4>${ico('pin','width:18px;height:18px')} ${esc(l.name)}</h4>
@@ -2569,6 +2764,11 @@ function renderLanding(){
     ${l.hours?`<div class="hrs">${ico('clock')} ${esc(l.hours)}</div>`:''}
     ${l.address?`<div class="navbtns"><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('SPECER '+l.address)}" target="_blank" rel="noopener">${brand('google-maps',18,13)} Google Maps</a><a href="https://waze.com/ul?q=${encodeURIComponent(l.address)}&navigate=yes" target="_blank" rel="noopener">${brand('waze',18,18)} Waze</a><a href="https://maps.apple.com/?q=${encodeURIComponent('SPECER')}&address=${encodeURIComponent(l.address)}" target="_blank" rel="noopener">${brand('apple',16,14)} Apple Mapy</a><a href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[formatted_address]=${encodeURIComponent(l.address)}" target="_blank" rel="noopener">${brand('uber',14,40)}</a>${l.email?`<a href="${gmailLink(l.email,'Pytanie do SPECER '+l.name,'')}" target="_blank" rel="noopener">${brand('gmail',13,18)} Napisz</a>`:''}</div>`:''}</div>`).join('');
   $('#lnBody').innerHTML=`
+  <section class="ln-sec" id="rezerwacja" style="padding-top:60px"><div class="ln-wrap">
+    <div class="ln-head rv"><span class="kick">Rezerwacja online</span><h2>Umów wizytę w kilka chwil</h2><p>Wybierz placówkę, usługę, specjalistę i wolny termin. Potwierdzenie dostaniesz od razu, a rejestracja skontaktuje się w razie pytań.</p></div>
+    <div class="bk rv" id="bk"></div>
+    <div style="max-width:1000px;margin:18px auto 0;text-align:center"><button class="btn ghost" style="background:#fff;color:#0f1f24;border-color:#e1e9eb" onclick="bkManage()">${ico('search')} Mam już rezerwację – sprawdź lub odwołaj</button></div>
+  </div></section>
   <section class="ln-sec" id="onas"><div class="ln-wrap">
     <div class="ln-head rv"><span class="kick">Zakres usług</span><h2>Kompleksowa opieka dla dorosłych, dzieci i niemowląt</h2><p>Prowadzimy fizjoterapię, konsultacje z lekarzami różnych specjalizacji, terapię integracji sensorycznej, pomoc logopedyczną i psychologiczną. Posiadamy pełne zaplecze diagnostyczne.</p></div>
     <div class="ln-grid g4">${OFFER.map((f,i)=>{const m=catMin(f[3]);return`<div class="ln-card cat rv" style="transition-delay:${(i%4)*.07}s" onclick="showCat('${f[3]}')"><div class="ln-ic">${ico(f[0])}</div><h3>${f[1]}</h3><p>${f[2]}</p><div class="from"><span>${m!=null?`od ${m} zł`:'Zobacz ceny'}</span>${ico('arrow')}</div></div>`}).join('')}</div>
@@ -2629,6 +2829,7 @@ function renderLanding(){
     <div>© ${new Date().getFullYear()} SPECER Sp. z o.o. · <a href="https://www.specer.pl" target="_blank" rel="noopener">specer.pl</a> · <a onclick="lnLogin()">Panel pracownika</a></div></div></footer>`;
   renderPriceList();
   if(th.length)renderStaffTabs();
+  renderBooking();
   if(lnObs)lnObs.disconnect();
   if('IntersectionObserver' in window){
     lnObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');lnObs.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});

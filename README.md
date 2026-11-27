@@ -12,6 +12,8 @@ Całość to jeden plik `index.html` (HTML + CSS + JavaScript), bez serwera i be
 2. W zakładce **Pracownicy** załóż konta pracownikom („Utwórz konto”).
 
 ## Funkcje
+- Rezerwacja online dla pacjentów: placówka → usługa → specjalista → termin → dane, kod rezerwacji, sprawdzanie i odwoływanie (wersja demonstracyjna – bez serwera rezerwacje zostają w przeglądarce pacjenta).
+- Grafik pracy i nieobecności specjalistów, lista oczekujących, plan terapii i skala bólu VAS, PESEL i zgody, raport miesięczny.
 - Kalendarz z przeciąganiem wizyt, serie wizyt, blokada podwójnej rezerwacji, dwie placówki (Otwock, Wiązowna).
 - Płatności (gotówka, karta, BLIK, telefon, przelew, pakiet, abonament) i pakiety wizyt ważne 3 miesiące.
 - Przypomnienia przez WhatsApp, SMS i Gmail, dodawanie wizyt do Kalendarza Google i plik .ics.
