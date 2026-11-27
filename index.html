@@ -681,6 +681,37 @@ td .sub{color:var(--muted);font-size:12px}
 .btn.light{background:#fff;color:#0f1f24}
 .btn.light:hover{box-shadow:0 8px 20px rgba(0,0,0,.25)}
 @media (max-width:600px){.pkg{grid-template-columns:1fr auto}.pkg .pk-bar{grid-column:1/-1;order:3}}
+/* ---------- GRAFIK / OCZEKUJĄCY / VAS ---------- */
+.slot.off{background:repeating-linear-gradient(45deg,rgba(220,38,38,.07) 0 6px,transparent 6px 12px)}
+.slot.off:hover::after{content:"poza grafikiem";color:var(--s-odw)}
+.sc-row{display:grid;grid-template-columns:150px 1fr 14px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.sc-row .input{padding:8px 10px}
+.chk{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px}
+.chk input{width:17px;height:17px;accent-color:var(--accent)}
+.off-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:6px}
+.off-item span{flex:1}
+.vas{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.vas button{border:1.5px solid var(--line);background:var(--card);border-radius:9px;padding:8px 0;font-weight:700;cursor:pointer;transition:.15s}
+.vas button:hover{transform:translateY(-2px)}
+.vas button.on{color:#fff;border-color:transparent}
+.vas-chart{width:100%;height:130px;display:block}
+.plan{border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.plan .pk-bar{margin-top:8px}
+.consents{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cs{display:inline-flex;gap:5px;align-items:center;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px}
+.cs.y{background:var(--s-pot-bg);color:var(--s-pot)}.cs.n{background:var(--s-odw-bg);color:var(--s-odw)}
+.wl-pref{font-size:12px;color:var(--muted)}
+.days-pick{display:flex;gap:6px;flex-wrap:wrap}
+.days-pick label{border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer;font-weight:600;font-size:13px}
+.days-pick label:has(input:checked){border-color:var(--accent);background:var(--grad-soft);color:var(--accent)}
+.days-pick input{display:none}
+.match{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;flex-wrap:wrap}
+.match b{flex:1;min-width:140px}
+.rep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.rep-grid div{background:var(--soft);border-radius:12px;padding:12px}
+.rep-grid small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.rep-grid b{display:block;font-size:19px;margin-top:2px}
+@media (max-width:700px){.sc-row{grid-template-columns:1fr 1fr 14px 1fr}.sc-row select:last-child:nth-child(5){grid-column:1/-1}.rep-grid{grid-template-columns:1fr 1fr}}
 /* ---------- TOAST ---------- */
 #toasts{position:fixed;top:16px;right:16px;z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:none}
 .toast{pointer-events:auto;display:flex;gap:12px;align-items:flex-start;min-width:290px;max-width:390px;background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:0 16px 40px rgba(0,0,0,.22);border-left:5px solid;animation:toastIn .45s cubic-bezier(.2,.9,.3,1.2);position:relative;overflow:hidden;cursor:pointer}
@@ -889,6 +920,7 @@ const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 const dLong=s=>parse(s).toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long'});
 const dShort=s=>parse(s).toLocaleDateString('pl-PL',{day:'numeric',month:'short'});
+const dFull=s=>parse(s).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric'});
 const dRel=s=>{const t=today();if(s===t)return'dziś';if(s===fmt(addDays(new Date(),1)))return'jutro';if(s===fmt(addDays(new Date(),-1)))return'wczoraj';return dLong(s)};
 const money=n=>Math.round(n).toLocaleString('pl-PL')+' zł';
 const initials=n=>String(n).split(' ').filter(Boolean).map(x=>x[0]).slice(0,2).join('').toUpperCase();
@@ -963,8 +995,43 @@ function downloadICS(id){
 }
 const pkgOptions=()=>{const out=[];PRICE_LIST.forEach(c=>c.items.forEach(i=>{if(!/pakiet/i.test(i.name))return;const m=i.name.match(/(\d+)\s*(wizyt|masaży|zabieg|szt)/i)||i.name.match(/pakiet\s*(\d+)/i);const pr=firstNum(i.price);if(m&&pr)out.push({name:i.name.replace(/^\*/,'').trim(),total:+m[1],price:pr})}));return out};
 const pkgActive=k=>k.used<k.total&&k.expires>=today();
+const DOWF=['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'];
+function availability(u,date,s,e){
+  if(!u)return{ok:true};
+  const off=(u.off||[]).find(o=>date>=o.from&&date<=o.to);
+  if(off)return{ok:false,reason:`nieobecność – ${off.reason||'urlop'}`,off:true};
+  if(!u.sched)return{ok:true};
+  const d=u.sched[parse(date).getDay()];
+  if(!d||!d.on)return{ok:false,reason:'nie pracuje w ten dzień'};
+  if(s<toMin(d.from)||e>toMin(d.to))return{ok:false,reason:`pracuje ${d.from}–${d.to}${d.loc?' ('+d.loc+')':''}`};
+  return{ok:true,loc:d.loc};
+}
+function schedSummary(u){
+  const on=u.sched?[1,2,3,4,5,6].filter(d=>u.sched[d]?.on):null;
+  const h=on?on.reduce((s,d)=>s+(toMin(u.sched[d].to)-toMin(u.sched[d].from))/60,0):0;
+  const nx=(u.off||[]).filter(o=>o.to>=today()).sort((a,b)=>a.from.localeCompare(b.from))[0];
+  return (on?`${on.length} dni · ${Math.round(h)} h/tydz.`:'Grafik nieustalony')+(nx?` · ${nx.reason||'urlop'} ${dShort(nx.from)}–${dShort(nx.to)}`:'');
+}
+function peselInfo(ps){
+  ps=String(ps||'').replace(/\D/g,'');if(ps.length!==11)return{valid:false};
+  const w=[1,3,7,9,1,3,7,9,1,3],sum=w.reduce((a,x,i)=>a+x*+ps[i],0);
+  if((10-sum%10)%10!==+ps[10])return{valid:false};
+  let y=+ps.slice(0,2),m=+ps.slice(2,4),d=+ps.slice(4,6),c=1900;
+  if(m>80){c=1800;m-=80}else if(m>60){c=2200;m-=60}else if(m>40){c=2100;m-=40}else if(m>20){c=2000;m-=20}
+  const bd=new Date(c+y,m-1,d);if(bd.getMonth()!==m-1)return{valid:false};
+  return{valid:true,birth:fmt(bd),sex:+ps[9]%2?'M':'K'};
+}
+const ageOf=b=>{if(!b)return null;const t=new Date(),d=parse(b);let a=t.getFullYear()-d.getFullYear();if(t.getMonth()<d.getMonth()||(t.getMonth()===d.getMonth()&&t.getDate()<d.getDate()))a--;return a};
+const ageTxt=a=>a==null?'':a<1?'poniżej 1 roku':a===1?'1 rok':(a%10>=2&&a%10<=4&&(a%100<12||a%100>14))?a+' lata':a+' lat';
+const vasColor=v=>`hsl(${Math.round(130-v*13)},70%,${v>6?45:42}%)`;
+function patientDebt(pid){const l=db.visits.filter(v=>v.patientId===pid&&v.status==='nieobecny'&&!v.paid);return{n:l.length,sum:l.reduce((s,v)=>s+price(v),0)}}
+function waitMatches(v){
+  const dw=parse(v.date).getDay(),h=toMin(v.time);
+  return (db.waitlist||[]).filter(w=>w.status==='czeka'&&w.patientId!==v.patientId&&(!w.therapistId||w.therapistId===v.therapistId)&&(!w.loc||w.loc===v.loc)&&(!(w.days||[]).length||w.days.includes(dw))&&(!w.part||w.part==='any'||(w.part==='am'?h<12*60:h>=12*60))&&(!w.serviceId||(S(w.serviceId)?.dur||60)<=dur(v)));
+}
 function migrate(){
   if(!Array.isArray(db.patients))db.patients=[];
+  if(!Array.isArray(db.waitlist))db.waitlist=[];
   db.patients.forEach(p=>{if(!Array.isArray(p.packages))p.packages=[]});
   const def=(db.clinic?.locations||[])[0]?.name||'';
   db.visits.forEach(v=>{if(!v.loc)v.loc=def});
@@ -1189,6 +1256,7 @@ const VIEWS={
   kalendarz:{t:'Kalendarz',i:'cal',r:['admin','recepcja','terapeuta'],fn:()=>vCalendar()},
   wizyty:{t:'Wizyty',i:'list',r:['admin','recepcja','terapeuta'],fn:()=>vVisits()},
   pacjenci:{t:'Pacjenci',i:'users',r:['admin','recepcja','terapeuta'],fn:()=>vPatients()},
+  oczekujacy:{t:'Lista oczekujących',i:'hourglass',r:['admin','recepcja'],fn:()=>vWait()},
   pracownicy:{t:'Pracownicy',i:'staff',r:['admin'],fn:()=>vStaff(),sec:'Administracja'},
   finanse:{t:'Finanse',i:'money',r:['admin'],fn:()=>vFinance()},
   ustawienia:{t:'Ustawienia',i:'gear',r:['admin','recepcja','terapeuta'],fn:()=>vSettings(),sec:'Konto'}
@@ -1216,7 +1284,7 @@ function render(){
   let html='<div class="nav-label">Menu</div>';
   Object.entries(VIEWS).filter(([k,v])=>v.r.includes(me.role)).forEach(([k,v])=>{
     if(v.sec)html+=`<div class="nav-label">${v.sec}</div>`;
-    html+=`<a class="${k===r?'active':''}" onclick="go('${k}');toggleSide(false)">${ico(v.i)}${viewTitle(k)}${k==='dashboard'&&tc?`<span class="count" title="${isStaff()?'Do potwierdzenia':'Pozostałe wizyty dziś'}">${tc}</span>`:''}</a>`;
+    html+=`<a class="${k===r?'active':''}" onclick="go('${k}');toggleSide(false)">${ico(v.i)}${viewTitle(k)}${k==='dashboard'&&tc?`<span class="count" title="${isStaff()?'Do potwierdzenia':'Pozostałe wizyty dziś'}">${tc}</span>`:''}${k==='oczekujacy'&&(db.waitlist||[]).some(w=>w.status==='czeka')?`<span class="count">${db.waitlist.filter(w=>w.status==='czeka').length}</span>`:''}</a>`;
   });
   $('#nav').innerHTML=html;
   $('#pageTitle').textContent=viewTitle(r);
@@ -1251,9 +1319,10 @@ function tile(label,val,icon,color,opts={}){
 /* ---------- WOLNE TERMINY ---------- */
 function freeSlots(therId,date,durMin,exceptId=null,fromNow=true){
   const busy=db.visits.filter(v=>v.therapistId===therId&&v.date===date&&ACTIVE(v)&&v.id!==exceptId).map(v=>[toMin(v.time),toMin(v.time)+dur(v)]);
-  const out=[],isT=date===today(),nm=nowMin();
+  const out=[],isT=date===today(),nm=nowMin(),u=U(therId);
   for(let m=START;m+durMin<=END;m+=30){
     if(fromNow&&isT&&m<nm)continue;
+    if(!availability(u,date,m,m+durMin).ok)continue;
     if(!busy.some(([s,e])=>s<m+durMin&&m<e))out.push(fromMin(m));
   }
   return out;
@@ -1347,6 +1416,17 @@ function copySMS(id){
   if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(done,()=>fallback());else fallback();
   function fallback(){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(_){toast('Nie udało się skopiować','','error')}ta.remove()}
 }
+function printReceipt(id){
+  const v=db.visits.find(x=>x.id===id);if(!v||!v.paid)return;const p=P(v.patientId),l=locOf(v)||(db.clinic?.locations||[])[0]||{};
+  const logo=document.querySelector('.login-logo').src,nr=`SP/${v.date.slice(0,4)}/${v.id}`;
+  $('#printArea').innerHTML=`<img src="${logo}" alt="SPECER"><div style="float:right;text-align:right;font-size:12px">${esc(l.name||'')}<br>${esc(l.address||'')}<br>${esc(l.phone||'')}</div>
+  <h1 style="clear:both;padding-top:10px">Potwierdzenie wpłaty nr ${nr}</h1><div>Data wystawienia: ${new Date().toLocaleDateString('pl-PL')}</div>
+  <table><tbody><tr><th>Pacjent</th><td>${esc(pName(p))}</td></tr><tr><th>Usługa</th><td>${esc(S(v.serviceId)?.name||'')} – ${dLong(v.date)}, ${v.time}</td></tr>
+  <tr><th>Specjalista</th><td>${esc(fullName(U(v.therapistId)))}</td></tr><tr><th>Forma płatności</th><td>${esc(PAY[v.paid.method]?.l||'')}${v.paid.pkgName?' – '+esc(v.paid.pkgName):''}</td></tr>
+  <tr><th>Kwota</th><td><b>${money(v.paid.amount)}</b></td></tr><tr><th>Data wpłaty</th><td>${new Date(v.paid.at).toLocaleString('pl-PL')}</td></tr></tbody></table>
+  <p style="margin-top:18px;font-size:11px">Dokument nie jest paragonem fiskalnym ani fakturą. Wystawił: ${esc(fullName(me))}.</p>`;
+  setTimeout(()=>window.print(),50);
+}
 function printDay(date){
   const list=db.visits.filter(v=>v.date===date&&v.status!=='odwolana').sort((a,b)=>(uName(a.therapistId)+a.time).localeCompare(uName(b.therapistId)+b.time,'pl'));
   const logo=document.querySelector('.login-logo').src;
@@ -1408,14 +1488,17 @@ function finishVisit(id){
       <label class="o-nie"><input type="radio" name="fst" value="nieobecny"><div class="ic2">${ico('x')}</div><span>Nie przyszedł</span></label>
     </div>
     <div class="field"><label>Notatka z wizyty</label><textarea class="input" id="fNote" rows="4" placeholder="Przebieg terapii, zalecenia, postępy...">${esc(v.tNote||'')}</textarea></div>
+    <div class="field"><label>Ból w skali VAS (0 – brak, 10 – najsilniejszy) · opcjonalnie</label><div class="vas" id="fVas">${[...Array(11)].map((_,i)=>`<button type="button" data-v="${i}" class="${v.vas===i?'on':''}" style="${v.vas===i?`background:${vasColor(i)}`:''}">${i}</button>`).join('')}</div></div>
     <div class="slots-free" id="fQuick">${['Poprawa zakresu ruchu.','Zmniejszenie dolegliwości bólowych.','Zalecono ćwiczenia w domu.','Kontynuować terapię.','Bez zmian.'].map(s=>`<button type="button">${s}</button>`).join('')}</div>`,
     `<button class="btn ghost" data-c>Anuluj</button><button class="btn grad" data-s>${ico('check')} Zapisz</button>`);
   const ta=o.querySelector('#fNote');
   o.querySelectorAll('#fQuick button').forEach(b=>b.onclick=()=>{ta.value=(ta.value.trim()+' '+b.textContent).trim();ta.focus()});
+  let vas=v.vas??null;
+  o.querySelectorAll('#fVas button').forEach(b=>b.onclick=()=>{const n=+b.dataset.v;vas=vas===n?null:n;o.querySelectorAll('#fVas button').forEach(x=>{const on=+x.dataset.v===vas;x.classList.toggle('on',on);x.style.background=on?vasColor(+x.dataset.v):''})});
   o.querySelector('[data-c]').onclick=closeModal;
   o.querySelector('[data-s]').onclick=()=>{
     const st=o.querySelector('input[name=fst]:checked').value;
-    v.status=st;v.tNote=ta.value.trim();save();
+    v.status=st;v.tNote=ta.value.trim();if(vas!=null&&st==='odbyta')v.vas=vas;else delete v.vas;save();
     notify(`${uName(v.therapistId)}: ${pName(p)} (${v.time}) – ${ST[st].l.toLowerCase()}`,st==='odbyta'?'success':'warn',['admin','recepcja']);
     closeAll();render();
     toast('Wizyta zakończona',`Status: ${ST[st].l}`,st==='odbyta'?'success':'warn');
@@ -1433,6 +1516,7 @@ function vCalendar(){
   let vs=myVisits().filter(v=>days.includes(v.date));
   if(staff&&state.calTher)vs=vs.filter(v=>v.therapistId===+state.calTher);
   if(state.calLoc)vs=vs.filter(v=>v.loc===state.calLoc);
+  const thSel=staff?(state.calTher?U(+state.calTher):null):me;
   if(state.calDay==null){const i=days.indexOf(t);state.calDay=i>=0?i:0}
   const shown=isMobile()?[days[state.calDay]]:days;
   const slots=[];for(let m=START;m<END;m+=30)slots.push(m);
@@ -1445,7 +1529,7 @@ function vCalendar(){
         <b><i style="background:${uColor(v.therapistId)}"></i>${esc(pName(p))}</b><span>${v.time}–${endT(v)} · ${esc(uName(v.therapistId).split(' ')[0])}</span>${h>52?`<span>${esc(S(v.serviceId)?.name||'')}</span>`:''}</div>`;
     }).join('');
     const nl=d===t&&nm>=START&&nm<END?`<div class="now-line" style="top:${(nm-START)/30*SLOT_H}px"></div>`:'';
-    return `<div class="cal-day ${d===t?'today':''}">${slots.map(m=>{const past=d<t||(d===t&&m+30<=nm);return`<div class="slot ${m%60===30?'hour':''} ${staff?'':'ro'} ${past?'past':''}" data-t="${fromMin(m)}" ${staff?`onclick="visitForm(null,{date:'${d}',time:'${fromMin(m)}'})" ondragover="dragOver(event)" ondragleave="this.classList.remove('drop')" ondrop="dropVisit(event,'${d}','${fromMin(m)}')"`:''}></div>`}).join('')}${evs}${nl}</div>`;
+    return `<div class="cal-day ${d===t?'today':''}">${slots.map(m=>{const past=d<t||(d===t&&m+30<=nm);const av=thSel?availability(thSel,d,m,m+30):{ok:true};return`<div class="slot ${m%60===30?'hour':''} ${staff?'':'ro'} ${past?'past':''} ${av.ok?'':'off'}" title="${av.ok?'':esc(av.reason)}" data-t="${fromMin(m)}" ${staff?`onclick="visitForm(null,{date:'${d}',time:'${fromMin(m)}'})" ondragover="dragOver(event)" ondragleave="this.classList.remove('drop')" ondrop="dropVisit(event,'${d}','${fromMin(m)}')"`:''}></div>`}).join('')}${evs}${nl}</div>`;
   }).join('');
   const rangeTxt=`${dShort(days[0])} – ${parse(days[4]).toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'})}`;
   const tot=vs.filter(v=>v.status!=='odwolana').length;
@@ -1462,7 +1546,7 @@ function vCalendar(){
   <div class="day-tabs">${days.map((d,i)=>{const dd=parse(d);return`<button class="${i===state.calDay?'on':''}" onclick="state.calDay=${i};render()"><small>${dd.toLocaleDateString('pl-PL',{weekday:'short'})}</small><b>${dd.getDate()}</b></button>`}).join('')}</div>
   <div class="cal-wrap"><div class="cal" style="grid-template-columns:58px repeat(${shown.length},minmax(${shown.length>1?150:0}px,1fr));${shown.length>1?'min-width:820px':''}">
     <div class="cal-h"></div>
-    ${shown.map(d=>{const dd=parse(d);const cnt=vs.filter(v=>v.date===d&&v.status!=='odwolana').length;return`<div class="cal-h ${d===t?'today':''}"><b>${dd.toLocaleDateString('pl-PL',{weekday:'short'})}</b><span>${dd.getDate()}</span><small>${cnt} ${cnt===1?'wizyta':cnt>1&&cnt<5?'wizyty':'wizyt'}</small></div>`}).join('')}
+    ${shown.map(d=>{const dd=parse(d);const cnt=vs.filter(v=>v.date===d&&v.status!=='odwolana').length;return`<div class="cal-h ${d===t?'today':''}"><b>${dd.toLocaleDateString('pl-PL',{weekday:'short'})}</b><span>${dd.getDate()}</span><small>${cnt} ${cnt===1?'wizyta':cnt>1&&cnt<5?'wizyty':'wizyt'}</small>${thSel&&availability(thSel,d,0,1).off?'<small style="color:var(--s-odw);font-weight:700">nieobecność</small>':''}</div>`}).join('')}
     <div class="cal-times">${slots.map(m=>`<div class="cal-time">${m%60===0?fromMin(m):''}</div>`).join('')}</div>
     ${cols}
   </div></div>
@@ -1512,7 +1596,7 @@ function visitForm(id=null,pre={}){
   if(!isStaff())return;
   if(!therapists().length){toast('Brak terapeutów','Dodaj terapeutę w zakładce Pracownicy','error');return}
   const v=id?db.visits.find(x=>x.id===id):null;
-  const d={patientId:v?.patientId||pre.patientId||'',serviceId:v?.serviceId||db.services[0]?.id,therapistId:v?.therapistId||pre.therapistId||(state.calTher?+state.calTher:therapists()[0].id),date:v?.date||pre.date||today(),time:v?.time||pre.time||'09:00',note:v?.note||''};
+  const d={patientId:v?.patientId||pre.patientId||'',serviceId:v?.serviceId||pre.serviceId||db.services[0]?.id,therapistId:v?.therapistId||pre.therapistId||(state.calTher?+state.calTher:therapists()[0].id),date:v?.date||pre.date||today(),time:v?.time||pre.time||'09:00',note:v?.note||''};
   if(!U(d.therapistId))d.therapistId=(therapists().find(u=>u.group==='Fizjoterapeuci')||therapists()[0]).id;
   const times=[];for(let m=START;m<END;m+=15)times.push(fromMin(m));
   if(!times.includes(d.time)){times.push(d.time);times.sort()}
@@ -1550,11 +1634,19 @@ function visitForm(id=null,pre={}){
     const dd=parse(date);
     const series=q('#vfR')?.value?` · seria: ${seriesDates(date,q('#vfR').value,+q('#vfRN').value).length} wizyt`:'';
     q('#vfHint').innerHTML=`⏱ ${t} – ${fromMin(toMin(t)+s.dur)} · <b>${esc(svcPrice(s))}</b>${series}${isWeekend(dd)?' · <span style="color:var(--s-nie)">uwaga: weekend</span>':''}${date<today()?' · <span style="color:var(--s-nie)">data w przeszłości</span>':''}`;
+    const pp=P(+q('#vfP').value),av=availability(U(th),date,toMin(t),toMin(t)+s.dur);
+    const warn=[];
+    if(!av.ok)warn.push(`${esc(fullName(U(th)))}: ${esc(av.reason)}`);
+    if(pp){const ns=db.visits.filter(x=>x.patientId===pp.id&&x.status==='nieobecny').length,db_=patientDebt(pp.id);
+      if(ns>=2)warn.push(`pacjent ma ${ns} nieobecności`);
+      if(db_.sum)warn.push(`zaległa opłata za nieodwołane wizyty: ${money(db_.sum)} (regulamin: do uregulowania przy rezerwacji)`);
+      if(pp.consents&&pp.consents.treat===false)warn.push('brak zgody pacjenta na zabiegi');}
+    if(warn.length)q('#vfHint').innerHTML+=`<div style="color:var(--s-nie);margin-top:4px">⚠️ ${warn.join(' · ')}</div>`;
     const free=freeSlots(th,date,s.dur,id,false);
     q('#vfFree').innerHTML=free.length?`<em>Wolne terminy ${esc(uName(th).split(' ')[0])}:</em>`+free.map(f=>`<button type="button" class="${f===t?'on':''}" data-f="${f}">${f}</button>`).join(''):'<em style="color:var(--s-odw)">Brak wolnych terminów tego dnia dla wybranej usługi.</em>';
     q('#vfFree').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{q('#vfH').value=b.dataset.f;refresh()});
   };
-  ['#vfS','#vfH','#vfT','#vfD','#vfR','#vfRN'].forEach(s=>q(s)&&q(s).addEventListener('change',()=>{if(s==='#vfR')q('#vfRN').disabled=!q('#vfR').value;refresh()}));
+  ['#vfP','#vfS','#vfH','#vfT','#vfD','#vfR','#vfRN'].forEach(s=>q(s)&&q(s).addEventListener('change',()=>{if(s==='#vfR')q('#vfRN').disabled=!q('#vfR').value;refresh()}));
   refresh();
   q('#vfNewBtn').onclick=()=>{q('#vfNew').classList.toggle('hidden');q('#npF').focus()};
   q('#npSave').onclick=()=>{
@@ -1568,7 +1660,7 @@ function visitForm(id=null,pre={}){
     toast('Dodano pacjenta',`${f} ${l} – wybrany w formularzu`);
   };
   q('[data-c]').onclick=closeModal;
-  q('[data-s]').onclick=()=>{
+  q('[data-s]').onclick=async()=>{
     const nv={loc:q('#vfL').value,patientId:+q('#vfP').value,serviceId:+q('#vfS').value,therapistId:+q('#vfT').value,date:q('#vfD').value,time:q('#vfH').value,note:q('#vfN').value.trim()};
     const showErr=html=>{q('#vfAlert').innerHTML=`<div class="alert shake">${ico('alert')}<div>${html}</div></div>`;o.querySelector('.modal').scrollTop=0};
     if(!nv.patientId){showErr('Wybierz pacjenta z listy lub dodaj nowego.');return}
@@ -1588,6 +1680,8 @@ function visitForm(id=null,pre={}){
       if(probs.some(p=>p.includes('terapeuta')))toast('Terapeuta zajęty!','Wybierz inną godzinę lub terapeutę','error');
       return;
     }
+    const sd=S(nv.serviceId).dur,avs=dates.map(dt=>({dt,a:availability(U(nv.therapistId),dt,toMin(nv.time),toMin(nv.time)+sd)})).filter(x=>!x.a.ok);
+    if(avs.length&&!await confirmBox('Poza grafikiem specjalisty',`<b>${esc(fullName(U(nv.therapistId)))}</b>:<br>${avs.slice(0,6).map(x=>`${dShort(x.dt)} – ${esc(x.a.reason)}`).join('<br>')}${avs.length>6?'<br>…':''}<br><br>Zapisać mimo to?`,'Zapisz mimo to',false))return;
     const pn=pName(P(nv.patientId));
     if(v){
       const moved=v.date!==nv.date||v.time!==nv.time;
@@ -1599,6 +1693,7 @@ function visitForm(id=null,pre={}){
       const what=dates.length>1?`seria ${dates.length} wizyt od ${dShort(nv.date)}`:`${dShort(nv.date)} ${nv.time}`;
       notify(`Nowa wizyta: ${pn}, ${what}`,'success',['admin','recepcja']);
       notify(`Nowa wizyta: ${pn}, ${what}`,'info',[],nv.therapistId);
+      if(pre.waitId){const w=(db.waitlist||[]).find(x=>x.id===pre.waitId);if(w){w.status='umowiony';w.booked=nv.date+' '+nv.time}}
       toast(dates.length>1?'Dodano serię wizyt':'Wizyta dodana',`${pn} · ${what}`);
     }
     save();closeAll();render();
@@ -1635,7 +1730,8 @@ function visitDetails(id){
     <dt>Usługa</dt><dd>${esc(s?.name||'—')} (${dur(v)} min)</dd><dt>Cena</dt><dd>${money(price(v))}</dd><dt>Specjalista</dt><dd><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${uColor(v.therapistId)};margin-right:6px"></span>${esc(fullName(U(v.therapistId)))}</dd>${v.loc?`<dt>Placówka</dt><dd>${esc(v.loc)}</dd>`:''}
     ${v.note?`<dt>Notatka</dt><dd style="font-weight:400">${esc(v.note)}</dd>`:''}${v.tNote?`<dt>Notatka terapeuty</dt><dd style="font-weight:400">${esc(v.tNote)}</dd>`:''}</dl>
     ${p?.notes?`<div class="warnbox" style="margin:0 0 14px">⚠️ ${esc(p.notes)}</div>`:''}
-    ${staff&&v.status!=='odwolana'?`<small class="lbl-s">Płatność</small><div class="pay-box ${v.paid?'ok':''}">${v.paid?`<div><b>${ico('check','width:16px;height:16px')} Opłacona: ${money(v.paid.amount)}</b><span>${PAY[v.paid.method]?.l||''}${v.paid.pkgName?' · '+esc(v.paid.pkgName):''} · ${new Date(v.paid.at).toLocaleString('pl-PL',{dateStyle:'short',timeStyle:'short'})}</span></div><button class="btn sm ghost" data-unpay>Cofnij</button>`:`<div><b>Nieopłacona</b><span>Do zapłaty: ${money(price(v))}${(p?.packages||[]).some(pkgActive)?' · pacjent ma aktywny pakiet':''}</span></div><button class="btn sm grad" data-pay>${ico('wallet')} Rozlicz</button>`}</div>`:''}
+    ${staff&&v.status==='odwolana'&&v.date>=today()&&waitMatches(v).length?`<small class="lbl-s">Wolny termin – pasujący z listy oczekujących</small><div style="margin:8px 0 16px">${waitMatches(v).map(w=>{const wp=P(w.patientId);return wp?`<div class="match"><b>${esc(pName(wp))}<div class="wl-pref">${esc(S(w.serviceId)?.name||'dowolna usługa')} · czeka od ${dShort(w.created)}</div></b><a class="btn sm ghost icon" href="${waLink(wp.phone,`Dzień dobry! Zwolnił się termin w SPECER: ${dLong(v.date)}, godz. ${v.time}${v.loc?' ('+v.loc+')':''}. Czy pasuje? Prosimy o odpowiedź.`)}" target="_blank" rel="noopener" title="Zaproponuj przez WhatsApp">${brand('whatsapp',16,16)}</a><a class="btn sm ghost icon" href="${telHref(wp.phone)}" title="Zadzwoń">${ico('phone')}</a><button class="btn sm grad" onclick="bookFromWait(${w.id},${v.id})">${ico('calCheck')} Umów</button></div>`:''}).join('')}</div>`:''}
+    ${staff&&v.status!=='odwolana'?`<small class="lbl-s">Płatność</small><div class="pay-box ${v.paid?'ok':''}">${v.paid?`<div><b>${ico('check','width:16px;height:16px')} Opłacona: ${money(v.paid.amount)}</b><span>${PAY[v.paid.method]?.l||''}${v.paid.pkgName?' · '+esc(v.paid.pkgName):''} · ${new Date(v.paid.at).toLocaleString('pl-PL',{dateStyle:'short',timeStyle:'short'})}</span></div><div style="display:flex;gap:6px"><button class="btn sm ghost icon" type="button" onclick="printReceipt(${v.id})" title="Drukuj potwierdzenie wpłaty">${ico('print')}</button><button class="btn sm ghost" data-unpay>Cofnij</button></div>`:`<div><b>Nieopłacona</b><span>Do zapłaty: ${money(price(v))}${(p?.packages||[]).some(pkgActive)?' · pacjent ma aktywny pakiet':''}</span></div><button class="btn sm grad" data-pay>${ico('wallet')} Rozlicz</button>`}</div>`:''}
     ${staff&&p&&OPEN(v)?`<small class="lbl-s">Przypomnienie i kalendarz</small><div class="share-row">
       <a class="share" href="${waLink(p.phone,reminderText(v))}" target="_blank" rel="noopener">${brand('whatsapp',17,17)} WhatsApp</a>
       <a class="share" href="${smsLink(p.phone,reminderText(v))}">${ico('sms')} SMS</a>
@@ -1729,7 +1825,13 @@ async function cancelVisit(id){
   notify(`Odwołano wizytę: ${pn}, ${dShort(v.date)} ${v.time}`,'error',['admin','recepcja']);
   notify(`Odwołano Twoją wizytę: ${pn}, ${dShort(v.date)} ${v.time}`,'error',[],v.therapistId);
   toast('Wizyta odwołana',`${pn} · ${dShort(v.date)} ${v.time}`,'error');
+  const wm=v.date>=today()?waitMatches(v):[];
+  if(wm.length){notify(`Zwolniony termin ${dShort(v.date)} ${v.time} pasuje do ${wm.length} os. z listy oczekujących`,'info',['admin','recepcja']);setTimeout(()=>toast('Wolny termin dla oczekujących',`${wm.length} os. pasuje – otwórz szczegóły odwołanej wizyty`,'info',7000),400)}
   render();
+}
+function bookFromWait(wid,vid){
+  const w=(db.waitlist||[]).find(x=>x.id===wid),v=db.visits.find(x=>x.id===vid);if(!w||!v)return;
+  closeAll();visitForm(null,{patientId:w.patientId,serviceId:w.serviceId||v.serviceId,therapistId:v.therapistId,date:v.date,time:v.time,loc:v.loc,waitId:w.id});
 }
 
 /* =========================================================
@@ -1827,9 +1929,21 @@ function patientForm(id=null){
   const o=openModal(p?'Edytuj pacjenta':'Dodaj pacjenta',`
     <div class="row2"><div class="field"><label>Imię *</label><input class="input" id="pfF" value="${esc(p?.first||'')}"></div><div class="field"><label>Nazwisko *</label><input class="input" id="pfL" value="${esc(p?.last||'')}"></div></div>
     <div class="row2"><div class="field"><label>Telefon *</label><input class="input" id="pfT" value="${esc(p?.phone||'')}" placeholder="500 000 000" inputmode="tel"></div><div class="field"><label>Email</label><input class="input" type="email" id="pfE" value="${esc(p?.email||'')}"></div></div>
-    <div class="field"><label>Notatki</label><textarea class="input" id="pfN" rows="3" placeholder="Rozpoznanie, przeciwwskazania, uwagi...">${esc(p?.notes||'')}</textarea></div>`,
+    <div class="row3"><div class="field"><label>PESEL</label><input class="input" id="pfPe" value="${esc(p?.pesel||'')}" inputmode="numeric" maxlength="11"></div><div class="field"><label>Data urodzenia</label><input class="input" type="date" id="pfB" value="${esc(p?.birth||'')}"></div><div class="field"><label>Opiekun (dla dzieci)</label><input class="input" id="pfG" value="${esc(p?.guardian||'')}" placeholder="imię i nazwisko, tel."></div></div>
+    <div class="hint" id="pfPeH"></div>
+    <div class="field"><label>Notatki</label><textarea class="input" id="pfN" rows="3" placeholder="Rozpoznanie, przeciwwskazania, uwagi...">${esc(p?.notes||'')}</textarea></div>
+    <div class="field"><label>Zgody</label>
+      <label class="chk"><input type="checkbox" id="pfC1" ${p?.consents?.rodo!==false?'checked':''}> Zgoda na przetwarzanie danych osobowych (RODO)</label>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="pfC2" ${p?.consents?.treat!==false?'checked':''}> Zgoda na wykonanie zabiegów fizjoterapeutycznych</label>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="pfC3" ${p?.consents?.remind!==false?'checked':''}> Zgoda na przypomnienia SMS / WhatsApp / e-mail</label></div>`,
     `${p&&me.role==='admin'?`<button class="btn danger-ghost" data-del style="margin-right:auto">${ico('trash')} Usuń pacjenta</button>`:''}<button class="btn ghost" data-c>Anuluj</button><button class="btn grad" data-s>${ico('check')} Zapisz</button>`);
   setTimeout(()=>o.querySelector('#pfF').focus(),50);
+  const pe=o.querySelector('#pfPe'),peH=o.querySelector('#pfPeH');
+  const chkPe=()=>{const v=pe.value.replace(/\D/g,'');if(!v){peH.textContent='';return}const i=peselInfo(v);
+    if(v.length<11){peH.innerHTML='PESEL: 11 cyfr';return}
+    if(!i.valid){peH.innerHTML='<span style="color:var(--s-odw)">Nieprawidłowy PESEL (suma kontrolna)</span>';return}
+    peH.innerHTML=`<span style="color:var(--s-pot)">✓ PESEL poprawny · ur. ${dFull(i.birth)} · ${i.sex==='K'?'kobieta':'mężczyzna'} · ${ageTxt(ageOf(i.birth))}</span>`;o.querySelector('#pfB').value=i.birth};
+  pe.addEventListener('input',chkPe);chkPe();
   o.querySelector('[data-c]').onclick=closeModal;
   if(o.querySelector('[data-del]'))o.querySelector('[data-del]').onclick=async()=>{
     const n=db.visits.filter(v=>v.patientId===id).length;
@@ -1838,7 +1952,10 @@ function patientForm(id=null){
   };
   o.querySelector('[data-s]').onclick=()=>{
     const g=s=>o.querySelector(s).value.trim();
-    const d={first:g('#pfF'),last:g('#pfL'),phone:g('#pfT'),email:g('#pfE'),notes:g('#pfN')};
+    const d={first:g('#pfF'),last:g('#pfL'),phone:g('#pfT'),email:g('#pfE'),notes:g('#pfN'),pesel:g('#pfPe').replace(/\D/g,''),birth:g('#pfB'),guardian:g('#pfG'),
+      consents:{rodo:o.querySelector('#pfC1').checked,treat:o.querySelector('#pfC2').checked,remind:o.querySelector('#pfC3').checked,date:today()}};
+    if(d.pesel&&!peselInfo(d.pesel).valid){toast('Nieprawidłowy PESEL','Sprawdź numer lub zostaw pole puste','error');return}
+    if(d.pesel&&db.patients.some(x=>x.id!==id&&x.pesel===d.pesel)){toast('PESEL już istnieje','Pacjent o tym numerze jest w bazie','warn');return}
     if(!d.first||!d.last||!d.phone){toast('Uzupełnij wymagane pola','Imię, nazwisko i telefon','error');return}
     if(d.phone.replace(/\D/g,'').length<9){toast('Nieprawidłowy telefon','Podaj co najmniej 9 cyfr','error');return}
     if(d.email&&!/^\S+@\S+\.\S+$/.test(d.email)){toast('Nieprawidłowy email','','error');return}
@@ -1863,17 +1980,27 @@ function patientCard(id){
     <div style="display:flex;gap:14px;align-items:center">${avatar(p.first+' '+p.last,COLORS[p.id%COLORS.length],'lg')}
       <div style="flex:1;min-width:0"><h3 style="font-size:20px">${esc(p.first)} ${esc(p.last)}</h3>
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:13px"><a href="${telHref(p.phone)}" style="color:var(--accent);font-weight:600;display:flex;gap:6px;align-items:center">${ico('phone','width:15px;height:15px')} ${esc(p.phone)}</a>${p.email?`<a href="mailto:${esc(p.email)}" style="color:var(--muted);display:flex;gap:6px;align-items:center">${ico('mail','width:15px;height:15px')} ${esc(p.email)}</a>`:''}</div></div></div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--muted)">${p.birth?`<span>${ico('baby','width:14px;height:14px;vertical-align:-2px')} ur. ${dFull(p.birth)} (${ageTxt(ageOf(p.birth))})</span>`:''}${p.pesel?`<span>PESEL: ${esc(p.pesel.slice(0,6))}•••••</span>`:''}${p.guardian?`<span>${ico('user','width:14px;height:14px;vertical-align:-2px')} Opiekun: ${esc(p.guardian)}</span>`:''}</div>
+    ${p.consents?`<div class="consents">${[['rodo','RODO'],['treat','Zabiegi'],['remind','Przypomnienia']].map(([k,l])=>`<span class="cs ${p.consents[k]?'y':'n'}">${ico(p.consents[k]?'check':'x','width:12px;height:12px')} ${l}</span>`).join('')}</div>`:''}
     ${p.notes?`<div class="warnbox">⚠️ ${esc(p.notes)}</div>`:''}
+    ${staff&&patientDebt(p.id).sum?`<div class="warnbox" style="border-color:var(--s-odw);color:var(--s-odw);background:var(--s-odw-bg)">💳 Zaległość za nieodwołane wizyty: <b>${money(patientDebt(p.id).sum)}</b> (${patientDebt(p.id).n})</div>`:''}
     <div class="info-grid"><div><small>Wizyty</small><b>${vs.length}</b></div><div><small>Odbyte</small><b style="color:var(--s-odb)">${vs.filter(v=>v.status==='odbyta').length}</b></div><div><small>Nieobecności</small><b style="color:var(--s-nie)">${vs.filter(v=>v.status==='nieobecny').length}</b></div><div><small>${staff?'Wartość':'Nadchodzące'}</small><b>${staff?money(spent):up.length}</b></div></div>
+    <div class="card-head" style="margin:18px 0 10px"><h4>Plan terapii</h4><button class="btn sm ghost" data-plan>${ico(p.plan?'edit':'plus')} ${p.plan?'Edytuj':'Ustal plan'}</button></div>
+    ${p.plan?(()=>{const done=db.visits.filter(v=>v.patientId===p.id&&v.status==='odbyta'&&(!p.plan.start||v.date>=p.plan.start)).length,tot=+p.plan.count||0;return`<div class="plan"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>${esc(p.plan.dx||'Plan terapii')}</b>${p.plan.goal?`<div style="color:var(--muted);font-size:13px;margin-top:3px">🎯 ${esc(p.plan.goal)}</div>`:''}</div><b>${done}${tot?'/'+tot:''} wizyt</b></div>${tot?`<div class="pk-bar"><i style="width:${Math.min(100,done/tot*100)}%"></i></div>`:''}<div style="color:var(--muted);font-size:12px;margin-top:6px">Od ${p.plan.start?dShort(p.plan.start):'—'}${p.plan.by?' · '+esc(p.plan.by):''}</div></div>`})():'<div style="color:var(--muted);font-size:13px">Brak planu terapii</div>'}
+    ${(()=>{const vv=db.visits.filter(v=>v.patientId===p.id&&v.vas!=null).sort(byTime);if(!vv.length)return'';const W=600,H=130,px=i=>vv.length<2?W/2:20+i*(W-40)/(vv.length-1),py=x=>15+(10-x)*(H-35)/10;
+      return`<div class="card-head" style="margin:18px 0 6px"><h4>Ból (VAS) w czasie</h4><small>${vv[0].vas} → ${vv[vv.length-1].vas}${vv.length>1?` (${vv[vv.length-1].vas-vv[0].vas<=0?'▼':'▲'} ${Math.abs(vv[vv.length-1].vas-vv[0].vas)})`:''}</small></div>
+      <svg class="vas-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${[0,5,10].map(g=>`<line x1="0" x2="${W}" y1="${py(g)}" y2="${py(g)}" stroke="var(--line)" stroke-dasharray="4 4"/>`).join('')}<polyline fill="none" stroke="var(--accent)" stroke-width="3" points="${vv.map((v,i)=>px(i)+','+py(v.vas)).join(' ')}"/>${vv.map((v,i)=>`<circle cx="${px(i)}" cy="${py(v.vas)}" r="6" fill="${vasColor(v.vas)}"><title>${dShort(v.date)}: VAS ${v.vas}</title></circle>`).join('')}</svg>`})()}
     <div class="card-head" style="margin:18px 0 10px"><h4>Pakiety</h4>${staff?`<button class="btn sm ghost" data-pk>${ico('plus')} Dodaj pakiet</button>`:''}</div>
     ${(p.packages||[]).length?(p.packages||[]).slice().reverse().map(k=>{const act=pkgActive(k);return`<div class="pkg ${act?'':'exp'}"><div><b>${esc(k.name)}</b><span>Kupiony ${dShort(k.bought)} · ważny do ${dShort(k.expires)}${k.expires<today()?' · wygasł':k.used>=k.total?' · wykorzystany':''}${k.payMethod&&PAY[k.payMethod]?' · '+PAY[k.payMethod].l:''}</span></div><div class="pk-bar"><i style="width:${Math.min(100,k.used/k.total*100)}%"></i></div><b>${k.used}/${k.total}</b></div>`}).join(''):'<div style="color:var(--muted);font-size:13px">Brak pakietów</div>'}
     ${up.length?`<h4 style="margin:18px 0 12px">Nadchodzące wizyty</h4>${up.slice().reverse().map(hist).join('')}`:''}
     <h4 style="margin:18px 0 12px">Historia i notatki${me.role==='terapeuta'?' <small style="color:var(--muted);font-weight:400">(Twoje wizyty)</small>':''}</h4>
     ${past.length?past.map(hist).join(''):'<div class="empty" style="padding:14px">Brak historii wizyt</div>'}`,
-    staff?`<button class="btn ghost" data-e>${ico('edit')} Edytuj dane</button><button class="btn grad" data-n>${ico('plus')} Umów wizytę</button>`:`<button class="btn ghost" data-close2>Zamknij</button>`,'wide');
+    staff?`<button class="btn ghost" data-wl>${ico('hourglass')} Na listę oczekujących</button><button class="btn ghost" data-e>${ico('edit')} Edytuj dane</button><button class="btn grad" data-n>${ico('plus')} Umów wizytę</button>`:`<button class="btn ghost" data-close2>Zamknij</button>`,'wide');
+  o.querySelector('[data-plan]').onclick=()=>{closeModal();planForm(id)};
   if(staff){
     o.querySelector('[data-e]').onclick=()=>{closeModal();patientForm(id)};
     if(o.querySelector('[data-pk]'))o.querySelector('[data-pk]').onclick=()=>{closeModal();packageForm(id)};
+    if(o.querySelector('[data-wl]'))o.querySelector('[data-wl]').onclick=()=>{closeModal();waitForm(null,id)};
     o.querySelector('[data-n]').onclick=()=>{closeModal();visitForm(null,{patientId:id})};
   }else o.querySelector('[data-close2]').onclick=closeModal;
 }
@@ -1893,6 +2020,128 @@ function vStaff(){
   </div></div>
   <div class="emp-grid" id="empGrid"></div><div id="empCount" style="color:var(--muted);font-size:12px;margin-top:14px"></div>`;
 }
+function planForm(pid){
+  const p=P(pid);if(!p)return;const pl=p.plan||{};
+  const o=openModal('Plan terapii',`
+    <p style="margin-bottom:14px;color:var(--muted)">Pacjent: <b style="color:var(--text)">${esc(pName(p))}</b></p>
+    <div class="field"><label>Rozpoznanie / problem</label><input class="input" id="plD" value="${esc(pl.dx||'')}" placeholder="np. stan po rekonstrukcji ACL"></div>
+    <div class="field"><label>Cel terapii</label><textarea class="input" id="plG" rows="2" placeholder="np. pełny zakres ruchu, powrót do biegania">${esc(pl.goal||'')}</textarea></div>
+    <div class="row2"><div class="field"><label>Planowana liczba wizyt</label><input class="input" id="plC" type="number" min="1" value="${esc(pl.count||10)}"></div><div class="field"><label>Początek</label><input class="input" id="plS" type="date" value="${esc(pl.start||today())}"></div></div>`,
+    `${p.plan?`<button class="btn danger-ghost" data-del style="margin-right:auto">${ico('trash')} Usuń plan</button>`:''}<button class="btn ghost" data-c>Anuluj</button><button class="btn grad" data-s>${ico('check')} Zapisz</button>`,'small');
+  const q=s=>o.querySelector(s);
+  q('[data-c]').onclick=()=>{closeModal();patientCard(pid)};
+  if(q('[data-del]'))q('[data-del]').onclick=()=>{delete p.plan;save();closeAll();patientCard(pid);toast('Usunięto plan terapii','','info')};
+  q('[data-s]').onclick=()=>{p.plan={dx:q('#plD').value.trim(),goal:q('#plG').value.trim(),count:+q('#plC').value||0,start:q('#plS').value,by:fullName(me)};save();closeAll();patientCard(pid);toast('Zapisano plan terapii',p.plan.dx||'')};
+}
+function scheduleForm(id){
+  const u=U(id);if(!u)return;
+  const sc=u.sched||{},L=locNames(),off=(u.off||[]).map(x=>({...x}));
+  const times=[];for(let m=7*60;m<=21*60;m+=30)times.push(fromMin(m));
+  const sel=(v,idn)=>`<select class="input" id="${idn}">${times.map(t=>`<option ${t===v?'selected':''}>${t}</option>`).join('')}</select>`;
+  const o=openModal('Grafik pracy i nieobecności',`
+    <p style="margin-bottom:14px"><b>${esc(fullName(u))}</b><br><span style="color:var(--muted)">${esc(u.group||'')}</span></p>
+    <label class="chk" style="margin-bottom:12px"><input type="checkbox" id="scOn" ${u.sched?'checked':''}> Stały grafik tygodniowy <span style="color:var(--muted);font-weight:400">(bez grafiku – dostępny w godzinach otwarcia)</span></label>
+    <div id="scRows">${[1,2,3,4,5,6].map(dw=>{const d=sc[dw]||{on:dw<=5,from:'08:00',to:dw===6?'14:00':'16:00',loc:L[0]||''};return`<div class="sc-row"><label class="chk"><input type="checkbox" id="scO${dw}" ${d.on?'checked':''}> <b>${DOWF[dw]}</b></label>${sel(d.from,'scF'+dw)}<span>–</span>${sel(d.to,'scT'+dw)}${L.length>1?`<select class="input" id="scL${dw}">${L.map(n=>`<option ${n===d.loc?'selected':''}>${esc(n)}</option>`).join('')}</select>`:'<span></span>'}</div>`}).join('')}</div>
+    <h4 style="margin:18px 0 10px">Nieobecności (urlop, szkolenie, L4)</h4>
+    <div id="offList"></div>
+    <div class="row3" style="align-items:end"><div class="field"><label>Od</label><input class="input" type="date" id="ofF" value="${today()}"></div><div class="field"><label>Do</label><input class="input" type="date" id="ofT" value="${today()}"></div><div class="field"><label>Powód</label><select class="input" id="ofR"><option>Urlop</option><option>Szkolenie</option><option>Zwolnienie lekarskie</option><option>Inne</option></select></div></div>
+    <button class="btn sm ghost" id="ofAdd" type="button">${ico('plus')} Dodaj nieobecność</button>`,
+    `<button class="btn ghost" data-c>Anuluj</button><button class="btn grad" data-s>${ico('check')} Zapisz grafik</button>`,'wide');
+  const q=s=>o.querySelector(s);
+  const rows=()=>q('#scRows').style.opacity=q('#scOn').checked?1:.4;q('#scOn').onchange=rows;rows();
+  const drawOff=()=>{q('#offList').innerHTML=off.length?off.sort((a,b)=>a.from.localeCompare(b.from)).map((x,i)=>`<div class="off-item">${ico('calX','width:16px;height:16px')}<span><b>${esc(x.reason)}</b> · ${dFull(x.from)} – ${dFull(x.to)}</span><button class="btn sm danger-ghost icon" data-i="${i}" type="button">${ico('trash')}</button></div>`).join(''):'<div style="color:var(--muted);font-size:13px;margin-bottom:10px">Brak zaplanowanych nieobecności</div>';
+    q('#offList').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{off.splice(+b.dataset.i,1);drawOff()})};
+  drawOff();
+  q('#ofAdd').onclick=()=>{const f=q('#ofF').value,t=q('#ofT').value;if(!f||!t||t<f){toast('Nieprawidłowe daty','','error');return}off.push({from:f,to:t,reason:q('#ofR').value});drawOff()};
+  q('[data-c]').onclick=closeModal;
+  q('[data-s]').onclick=()=>{
+    if(q('#scOn').checked){const sc2={};for(const dw of [1,2,3,4,5,6]){const f=q('#scF'+dw).value,t=q('#scT'+dw).value,on=q('#scO'+dw).checked;if(on&&t<=f){toast('Nieprawidłowe godziny',DOWF[dw],'error');return}sc2[dw]={on,from:f,to:t,loc:q('#scL'+dw)?.value||L[0]||''}}u.sched=sc2}else delete u.sched;
+    u.off=off;save();
+    const clash=db.visits.filter(v=>v.therapistId===u.id&&v.date>=today()&&OPEN(v)&&!availability(u,v.date,toMin(v.time),toMin(v.time)+dur(v)).ok);
+    closeAll();render();toast('Zapisano grafik',schedSummary(u));
+    if(clash.length)setTimeout(()=>toast('Wizyty poza grafikiem',`${clash.length} zaplanowanych wizyt koliduje z grafikiem – sprawdź kalendarz`,'warn',7000),300);
+  };
+}
+function vWait(){
+  const all=db.waitlist||[],f=state.wf||'czeka';
+  const list=all.filter(w=>f==='all'||w.status===f).sort((a,b)=>a.created.localeCompare(b.created));
+  const pref=w=>[(w.days||[]).length?w.days.map(d=>DOWF[d].slice(0,3)).join(', '):'dowolne dni',w.part==='am'?'rano (do 12:00)':w.part==='pm'?'po południu':'dowolna pora',w.loc||'dowolna placówka'].join(' · ');
+  return `
+  <div class="page-head"><div><h3>Lista oczekujących</h3><p>Pacjenci czekający na wolny termin. Gdy ktoś odwoła wizytę, system pokaże pasujące osoby.</p></div>
+  <div class="actions"><button class="btn grad" onclick="waitForm()">${ico('plus')} Dodaj do listy</button></div></div>
+  <div class="card">
+    <div class="toolbar"><div class="seg">${[['czeka','Oczekujący'],['umowiony','Umówieni'],['all','Wszyscy']].map(([k,l])=>`<button class="${f===k?'on':''}" onclick="state.wf='${k}';render()">${l} <span style="opacity:.6">${k==='all'?all.length:all.filter(w=>w.status===k).length}</span></button>`).join('')}</div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Pacjent</th><th>Usługa / specjalista</th><th>Preferencje</th><th>Czeka</th><th style="text-align:right">Akcje</th></tr></thead><tbody>
+    ${list.length?list.map((w,i)=>{const p=P(w.patientId);if(!p)return'';const days=Math.max(0,Math.round((parse(today())-parse(w.created))/864e5));return`<tr style="animation-delay:${Math.min(i,15)*.03}s">
+      <td class="clickable" onclick="patientCard(${p.id})"><b>${esc(pName(p))}</b><div class="sub">${esc(p.phone)}</div></td>
+      <td>${esc(S(w.serviceId)?.name||'Dowolna usługa')}<div class="sub">${w.therapistId?esc(fullName(U(w.therapistId))):'dowolny specjalista'}</div></td>
+      <td><div class="wl-pref">${esc(pref(w))}</div>${w.note?`<div class="sub">📝 ${esc(w.note)}</div>`:''}</td>
+      <td>${days?days+' dni':'od dziś'}<div class="sub">${w.status==='umowiony'?`umówiony: ${esc(w.booked||'')}`:''}</div></td>
+      <td style="text-align:right;white-space:nowrap">${w.status==='czeka'?`<a class="btn sm ghost icon" href="${telHref(p.phone)}" title="Zadzwoń">${ico('phone')}</a> <a class="btn sm ghost icon" href="${waLink(p.phone,'Dzień dobry! Kontaktujemy się z SPECER w sprawie wolnego terminu wizyty.')}" target="_blank" rel="noopener" title="WhatsApp">${brand('whatsapp',16,16)}</a> <button class="btn sm grad" onclick="visitForm(null,{patientId:${p.id},serviceId:${w.serviceId||'undefined'},therapistId:${w.therapistId||'undefined'},loc:${w.loc?`'${esc(w.loc)}'`:'undefined'},waitId:${w.id}})">${ico('calCheck')} Umów</button> `:''}<button class="btn sm ghost icon" onclick="waitForm(${w.id})" title="Edytuj">${ico('edit')}</button> <button class="btn sm danger-ghost icon" onclick="waitDel(${w.id})" title="Usuń">${ico('trash')}</button></td></tr>`}).join(''):`<tr><td colspan="5"><div class="empty">${ico('hourglass')}<div>Lista jest pusta</div></div></td></tr>`}
+    </tbody></table></div></div>`;
+}
+function waitForm(id=null,pid=null){
+  const w=id?(db.waitlist||[]).find(x=>x.id===id):null;
+  const pats=db.patients.slice().sort((a,b)=>a.last.localeCompare(b.last,'pl'));
+  if(!pats.length){toast('Brak pacjentów','Najpierw dodaj pacjenta','error');return}
+  const sel=w?.patientId||pid;
+  const o=openModal(w?'Edytuj wpis':'Dodaj do listy oczekujących',`
+    <div class="field"><label>Pacjent</label><select class="input" id="wlP">${pats.map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.last)} ${esc(p.first)} · ${esc(p.phone)}</option>`).join('')}</select></div>
+    <div class="row2"><div class="field"><label>Usługa</label><select class="input" id="wlS"><option value="">Dowolna</option>${svcOptions(w?.serviceId)}</select></div>
+    <div class="field"><label>Specjalista</label><select class="input" id="wlT"><option value="">Dowolny</option>${therOptions(w?.therapistId)}</select></div></div>
+    <div class="field"><label>Preferowane dni</label><div class="days-pick">${[1,2,3,4,5,6].map(d=>`<label><input type="checkbox" value="${d}" ${(w?.days||[]).includes(d)?'checked':''}>${DOWF[d].slice(0,3)}</label>`).join('')}</div></div>
+    <div class="row2"><div class="field"><label>Pora dnia</label><select class="input" id="wlH"><option value="any">Dowolna</option><option value="am" ${w?.part==='am'?'selected':''}>Rano (do 12:00)</option><option value="pm" ${w?.part==='pm'?'selected':''}>Po południu</option></select></div>
+    <div class="field"><label>Placówka</label><select class="input" id="wlL"><option value="">Dowolna</option>${locNames().map(n=>`<option ${w?.loc===n?'selected':''}>${esc(n)}</option>`).join('')}</select></div></div>
+    <div class="field"><label>Notatka</label><input class="input" id="wlN" value="${esc(w?.note||'')}" placeholder="np. może przyjść w ciągu godziny od telefonu"></div>`,
+    `<button class="btn ghost" data-c>Anuluj</button><button class="btn grad" data-s>${ico('check')} Zapisz</button>`);
+  const q=s=>o.querySelector(s);
+  q('[data-c]').onclick=closeModal;
+  q('[data-s]').onclick=()=>{
+    const d={patientId:+q('#wlP').value,serviceId:+q('#wlS').value||null,therapistId:+q('#wlT').value||null,days:[...o.querySelectorAll('.days-pick input:checked')].map(x=>+x.value),part:q('#wlH').value,loc:q('#wlL').value,note:q('#wlN').value.trim()};
+    db.waitlist=db.waitlist||[];
+    if(w)Object.assign(w,d);else db.waitlist.push({id:nid(),...d,status:'czeka',created:today()});
+    save();closeAll();if(route()==='oczekujacy')render();else render();toast(w?'Zapisano wpis':'Dodano do listy oczekujących',pName(P(d.patientId)));
+  };
+}
+async function waitDel(id){
+  if(!await confirmBox('Usunąć wpis?','Pacjent zostanie usunięty z listy oczekujących.','Usuń'))return;
+  db.waitlist=(db.waitlist||[]).filter(x=>x.id!==id);save();render();toast('Usunięto z listy','','info');
+}
+function monthStats(ym){
+  const inM=d=>d&&d.slice(0,7)===ym;
+  const vs=db.visits.filter(v=>inM(v.date));
+  const c=k=>vs.filter(v=>v.status===k).length;
+  const plan=vs.filter(ACTIVE).reduce((s,v)=>s+price(v),0),real=vs.filter(v=>v.status==='odbyta').reduce((s,v)=>s+price(v),0);
+  const paidV=db.visits.filter(v=>v.paid&&inM(fmt(new Date(v.paid.at)))).reduce((s,v)=>s+(v.paid.amount||0),0);
+  const pk=db.patients.flatMap(p=>(p.packages||[]).filter(k=>inM(k.bought)));
+  const done=c('odbyta'),ns=c('nieobecny');
+  const top=(key,name)=>{const m={};vs.filter(v=>v.status==='odbyta').forEach(v=>{const k=key(v);m[k]=m[k]||{n:0,sum:0};m[k].n++;m[k].sum+=price(v)});return Object.entries(m).map(([k,x])=>({name:name(k),...x})).sort((a,b)=>b.sum-a.sum).slice(0,5)};
+  return{ym,total:vs.length,done,cancel:c('odwolana'),ns,nsRate:done+ns?Math.round(ns/(done+ns)*100):0,plan,real,paid:paidV+pk.reduce((s,k)=>s+(k.price||0),0),pkN:pk.length,
+    newP:db.patients.filter(p=>inM(p.created)).length,topS:top(v=>v.serviceId,k=>S(+k)?.name||'—'),topT:top(v=>v.therapistId,k=>fullName(U(+k)))};
+}
+function monthReport(){
+  const ym=state.finMonth||today().slice(0,7),m=monthStats(ym);
+  const mName=parse(ym+'-01').toLocaleDateString('pl-PL',{month:'long',year:'numeric'});
+  const tl=(l)=>l.length?l.map((x,i)=>`<div class="pm-row"><span style="color:var(--muted);min-width:18px">${i+1}.</span><span>${esc(x.name)} <small style="color:var(--muted)">· ${x.n}</small></span><b>${money(x.sum)}</b></div>`).join(''):'<div style="color:var(--muted);font-size:13px">Brak odbytych wizyt</div>';
+  return `<div class="card" style="margin-top:20px">
+    <div class="card-head"><div><h4>Raport miesięczny</h4><small style="text-transform:capitalize">${mName}</small></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="input" type="month" value="${ym}" style="width:auto;padding:8px 10px" onchange="state.finMonth=this.value;render()">
+    <button class="btn ghost" onclick="printMonth('${ym}')">${ico('print')} Drukuj</button><button class="btn ghost" onclick="exportMonth('${ym}')">${brand('microsoft-excel',17,17)} CSV</button></div></div>
+    <div class="rep-grid"><div><small>Wizyty</small><b>${m.total}</b></div><div><small>Odbyte</small><b style="color:var(--s-odb)">${m.done}</b></div><div><small>Odwołane</small><b style="color:var(--s-odw)">${m.cancel}</b></div><div><small>Nieobecności</small><b style="color:var(--s-nie)">${m.ns} <span style="font-size:13px">(${m.nsRate}%)</span></b></div>
+    <div><small>Przychód plan.</small><b>${money(m.plan)}</b></div><div><small>Zrealizowany</small><b>${money(m.real)}</b></div><div><small>Wpłaty</small><b style="color:var(--s-pot)">${money(m.paid)}</b></div><div><small>Nowi pacjenci / pakiety</small><b>${m.newP} / ${m.pkN}</b></div></div>
+    <div class="grid2e" style="margin:0"><div><h4 style="margin-bottom:8px">Top usługi</h4>${tl(m.topS)}</div><div><h4 style="margin-bottom:8px">Top specjaliści</h4>${tl(m.topT)}</div></div></div>`;
+}
+function printMonth(ym){
+  const m=monthStats(ym),logo=document.querySelector('.login-logo').src,mName=parse(ym+'-01').toLocaleDateString('pl-PL',{month:'long',year:'numeric'});
+  const rows=l=>l.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${x.n}</td><td>${money(x.sum)}</td></tr>`).join('')||'<tr><td colspan="4">Brak danych</td></tr>';
+  $('#printArea').innerHTML=`<img src="${logo}" alt="SPECER"><h1>Raport miesięczny – ${mName}</h1><div>Wygenerowano: ${new Date().toLocaleString('pl-PL')} · ${esc(fullName(me))}</div>
+  <table><tbody><tr><th>Wizyty</th><td>${m.total}</td><th>Odbyte</th><td>${m.done}</td></tr><tr><th>Odwołane</th><td>${m.cancel}</td><th>Nieobecności</th><td>${m.ns} (${m.nsRate}%)</td></tr>
+  <tr><th>Przychód planowany</th><td>${money(m.plan)}</td><th>Zrealizowany</th><td>${money(m.real)}</td></tr><tr><th>Wpłaty</th><td>${money(m.paid)}</td><th>Nowi pacjenci / pakiety</th><td>${m.newP} / ${m.pkN}</td></tr></tbody></table>
+  <h1>Top usługi</h1><table><thead><tr><th>#</th><th>Usługa</th><th>Wizyty</th><th>Wartość</th></tr></thead><tbody>${rows(m.topS)}</tbody></table>
+  <h1>Top specjaliści</h1><table><thead><tr><th>#</th><th>Specjalista</th><th>Wizyty</th><th>Wartość</th></tr></thead><tbody>${rows(m.topT)}</tbody></table>`;
+  setTimeout(()=>window.print(),50);
+}
+function exportMonth(ym){const d=parse(ym+'-01'),e=new Date(d.getFullYear(),d.getMonth()+1,0);exportCSV(0,fmt(d),fmt(e))}
 function renderStaffGrid(){
   const el=$('#empGrid');if(!el)return;
   const [a,b]=weekRange(0),t=today(),q=(state.sq||'').toLowerCase().trim();
@@ -1908,7 +2157,7 @@ function renderStaffGrid(){
     return `<div class="emp" style="animation-delay:${Math.min(i,12)*.04}s;--c:${u.color}">
       ${u.id!==me.id?`<button class="btn icon danger-ghost del" onclick="deleteStaff(${u.id})" title="Usuń">${ico('trash')}</button>`:''}
       <div class="top">${avatar(u.name,u.color,'lg')}<div style="min-width:0">${u.title?`<small style="color:var(--muted)">${esc(u.title)}</small>`:''}<h5>${esc(u.name)}${u.id===me.id?' <small style="color:var(--muted);font-weight:500">(Ty)</small>':''}</h5><span class="role-b role-${u.role}">${u.role==='terapeuta'?esc(u.group||'Specjalista'):ROLE[u.role]}</span></div></div>
-      <p>${ico('tag')} ${esc(u.spec||'—')}</p><p>${ico(hasAccount(u)?'mail':'lock')} ${hasAccount(u)?esc(u.email):'<span style="color:var(--muted)">Brak konta</span>'} <button class="btn sm ${hasAccount(u)?'ghost':''}" style="margin-left:auto;padding:4px 10px" onclick="accountForm(${u.id})">${hasAccount(u)?'Konto':'Utwórz konto'}</button></p>${u.phone?`<p>${ico('phone')} <a href="${telHref(u.phone)}">${esc(u.phone)}</a></p>`:''}
+      <p>${ico('tag')} ${esc(u.spec||'—')}</p>${u.role==='terapeuta'?`<p>${ico('calClock')} ${esc(schedSummary(u))} <button class="btn sm ghost" style="margin-left:auto;padding:4px 10px" onclick="scheduleForm(${u.id})">Grafik</button></p>`:''}<p>${ico(hasAccount(u)?'mail':'lock')} ${hasAccount(u)?esc(u.email):'<span style="color:var(--muted)">Brak konta</span>'} <button class="btn sm ${hasAccount(u)?'ghost':''}" style="margin-left:auto;padding:4px 10px" onclick="accountForm(${u.id})">${hasAccount(u)?'Konto':'Utwórz konto'}</button></p>${u.phone?`<p>${ico('phone')} <a href="${telHref(u.phone)}">${esc(u.phone)}</a></p>`:''}
       ${u.role==='terapeuta'?`<div class="stats"><div><b>${td.length}</b><small>dziś</small></div><div><b>${wk.length}</b><small>w tygodniu</small></div><div><b>${money(wk.reduce((s,v)=>s+price(v),0))}</b><small>wartość tyg.</small></div></div>`:''}
     </div>`}).join(''):`<div class="card empty" style="grid-column:1/-1">${ico('search')}<div>Brak pracowników spełniających kryteria</div></div>`;
   $('#empCount').textContent=`Wyświetlono: ${list.length} · z kontem: ${list.filter(hasAccount).length}`;
@@ -2045,10 +2294,11 @@ function vFinance(){
     <div class="card"><div class="card-head"><h4>Wg usług</h4><small>liczba i wartość</small></div>
       ${perS.map((x,i)=>`<div class="hbar"><div class="top"><span>${esc(x.s.name)} <small style="color:var(--muted)">· ${x.n}× ${x.s.price} zł</small></span><b>${money(x.sum)}</b></div><div class="track"><div class="fill" data-w="${x.sum/maxS*100}" style="background:var(--grad);transition-delay:${i*.1}s"></div></div></div>`).join('')||'<div class="empty">Brak wizyt w tym tygodniu</div>'}
     </div>
-  </div>`;
+  </div>
+  ${monthReport()}`;
 }
-function exportCSV(off=0){
-  const [a,b]=weekRange(off);
+function exportCSV(off=0,ra,rb){
+  const [a,b]=ra?[ra,rb]:weekRange(off);
   const list=db.visits.filter(v=>v.date>=a&&v.date<=b).sort(byTime);
   const q=s=>`"${String(s??'').replace(/"/g,'""')}"`;
   const rows=[['Data','Godzina','Koniec','Placówka','Pacjent','Telefon','Usługa','Specjalista','Status','Cena (zł)','Płatność','Zapłacono (zł)','Notatka','Notatka terapeuty']]
@@ -2105,6 +2355,7 @@ function vSettings(){
       ${db.services.map(s=>`<div class="svc-row"><input class="input" value="${esc(s.name)}" onchange="updService(${s.id},'name',this.value)"><select class="input" onchange="updService(${s.id},'dur',this.value)">${[15,30,45,60,75,90,120].map(m=>`<option ${m===s.dur?'selected':''}>${m}</option>`).join('')}</select><input class="input" type="number" min="0" step="10" value="${s.price}" onchange="updService(${s.id},'price',this.value)"><button class="btn icon danger-ghost" onclick="delService(${s.id})" title="Usuń usługę">${ico('trash')}</button></div>`).join('')}
     </div>`:''}
     <div class="card" style="margin-bottom:20px">
+      ${me.role==='terapeuta'?`<div class="card-head"><div><h4>Mój grafik</h4><small>${esc(schedSummary(me))}</small></div></div>${me.sched?[1,2,3,4,5,6].map(d=>`<div class="pm-row"><span style="min-width:110px">${DOWF[d]}</span><span>${me.sched[d]?.on?`${me.sched[d].from}–${me.sched[d].to}${me.sched[d].loc?' · '+esc(me.sched[d].loc):''}`:'<span style="color:var(--muted)">wolne</span>'}</span></div>`).join(''):'<p style="color:var(--muted);font-size:13px">Grafik ustala recepcja lub administrator.</p>'}<div style="height:18px"></div>`:''}
       <div class="card-head"><div><h4>O aplikacji</h4><small>Jeden plik index.html · dane w tej przeglądarce</small></div></div>
       <div class="set-row"><div><b>Działa w przeglądarkach</b><p>Aktualne wersje Chrome, Firefox, Safari i Edge – na komputerze i telefonie.</p></div><div style="display:flex;gap:10px">${brand('google-chrome',26,26)}${brand('firefox',26,26)}${brand('safari',26,26)}${brand('microsoft-edge',26,26)}</div></div>
       <div class="set-row"><div><b>Na telefonie</b><p>${brand('android',14,24)} Android (Chrome): menu ⋮ → „Dodaj do ekranu głównego”.<br>${brand('apple',15,13)} iPhone (Safari): Udostępnij → „Do ekranu początkowego”.</p></div></div>
