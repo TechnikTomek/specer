@@ -22,4 +22,4 @@ Całość to jeden plik `index.html` (HTML + CSS + JavaScript), bez serwera i be
 - Przenoszenie danych: Ustawienia → Kopia zapasowa (pobierz / wczytaj JSON).
 - Hasła są przechowywane jako skrót SHA-256 z solą, ale logowanie działa po stronie przeglądarki – to nie jest zabezpieczenie na poziomie serwera.
 - Personel, cennik i dane kontaktowe pochodzą ze strony www.specer.pl.
-- Ikony marek: [theSVG](https://thesvg.org) (licencja MIT). Nazwy i logotypy należą do ich właścicieli.
+- Ikony marek: [theSVG](https://thesvg.org) (licencja MIT), ikony interfejsu: [Lucide](https://lucide.dev) (licencja ISC). Nazwy i logotypy należą do ich właścicieli.
